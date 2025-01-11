@@ -16,7 +16,7 @@ interface PredictionProps {
   userVote?: boolean
 }
 
-export default function Prediction({ id, index, content, source, true_votes, false_votes, evaluation_date, prediction_date, userVote: initialUserVote }: PredictionProps) {
+export default function Prediction({ id, content, source, true_votes, false_votes, evaluation_date, prediction_date, userVote: initialUserVote }: PredictionProps) {
   const [userVote, setUserVote] = useState<boolean | null>(initialUserVote ?? null)
   const [localTrueVotes, setLocalTrueVotes] = useState(true_votes)
   const [localFalseVotes, setLocalFalseVotes] = useState(false_votes)
