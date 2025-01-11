@@ -19,60 +19,70 @@ interface PredictionData {
 export default function Home() {
   const [predictions, setPredictions] = useState<PredictionData[]>([])
   const [userVotes, setUserVotes] = useState<Record<number, boolean>>({})
+  const [isLoading, setIsLoading] = useState(true)
+
+  const fetchLatestData = async () => {
+    try {
+      const [predictionsResult, visitorId] = await Promise.all([
+        supabase.rpc('get_vote_counts'),
+        getFingerprint()
+      ])
+
+      const votesResult = await supabase
+        .from('votes')
+        .select('prediction_id, vote')
+        .eq('fingerprint', visitorId)
+
+      if (predictionsResult.data) {
+        console.log('Updating predictions:', predictionsResult.data.length)
+        setPredictions(predictionsResult.data)
+      }
+
+      if (votesResult.data) {
+        const votesMap = votesResult.data.reduce((acc, vote) => ({
+          ...acc,
+          [vote.prediction_id]: vote.vote
+        }), {})
+        console.log('Updating user votes:', Object.keys(votesMap).length)
+        setUserVotes(votesMap)
+      }
+    } catch (err) {
+      console.error('Error fetching latest data:', err)
+    }
+  }
 
   useEffect(() => {
-    fetchPredictions()
+    const loadInitialData = async () => {
+      setIsLoading(true)
+      await fetchLatestData()
+      setIsLoading(false)
+    }
+
+    loadInitialData()
+    
     const subscription = supabase
-      .channel('public:predictions')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'votes' }, fetchPredictions)
-      .subscribe()
+      .channel('public:votes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'votes' },
+        (payload) => {
+          console.log('Received vote change:', payload)
+          fetchLatestData()
+        }
+      )
+      .subscribe((status) => {
+        console.log('Subscription status:', status)
+      })
 
     return () => {
       subscription.unsubscribe()
     }
   }, [])
 
-  useEffect(() => {
-    const fetchUserVotes = async () => {
-      const visitorId = await getFingerprint()
-      const { data } = await supabase
-        .from('votes')
-        .select('prediction_id, vote')
-        .eq('fingerprint', visitorId)
-
-      if (data) {
-        const votesMap = data.reduce((acc, vote) => ({
-          ...acc,
-          [vote.prediction_id]: vote.vote
-        }), {})
-        setUserVotes(votesMap)
-      }
-    }
-
-    fetchUserVotes()
-  }, [])
-
-  const fetchPredictions = async () => {
-    try {
-      const { data, error } = await supabase
-        .rpc('get_vote_counts')
-
-      if (error) {
-        console.error('Error fetching predictions:', error)
-        return
-      }
-
-      console.log('Fetched predictions:', data.length)
-      setPredictions(data)
-    } catch (err) {
-      console.error('Unexpected error:', err)
-    }
-  }
-
   return (
     <div className="container mx-auto px-4 py-8 min-h-screen">
       <Header predictions={predictions} />
-      {predictions.length === 0 ? (
+      {isLoading ? (
         <div className="flex flex-col items-center justify-center h-[50vh]">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 mb-4"></div>
           <p className="text-gray-400">Loading predictions...</p>
