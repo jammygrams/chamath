@@ -53,10 +53,8 @@ export default function Home() {
       {predictions.length === 0 && <p>Loading predictions...</p>}
       <div className="w-full">
         <div className="grid grid-cols-12 gap-4 mb-4 font-semibold text-sm text-gray-600 px-4">
-          <div className="col-span-5">Chamath predicts...</div>
-          <div className="col-span-1">Predicted in</div>
-          <div className="col-span-1">To come true in</div>
-          <div className="col-span-3">Results</div>
+          <div className="col-span-8">Chamath predicts...</div>
+          <div className="col-span-2">Results</div>
           <div className="col-span-2">Vote</div>
         </div>
         {predictions.map(prediction => (

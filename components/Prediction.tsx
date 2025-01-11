@@ -75,29 +75,28 @@ export default function Prediction({ id, content, source, true_votes, false_vote
 
   return (
     <div className="grid grid-cols-12 gap-4 items-center px-4 py-3 hover:bg-gray-50">
-      <div className="col-span-5">{content}</div>
-      <div className="col-span-1">
-        <a
-          href={source}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm text-blue-600 hover:text-blue-800 underline"
-        >
-          {prediction_date ? new Date(prediction_date).getFullYear() : 'TBD'}
-        </a>
-      </div>
-      <div className="col-span-1 text-sm text-gray-600">
-        {evaluation_date ? new Date(evaluation_date).getFullYear() : 'TBD'}
-      </div>
-      <div className="col-span-3">
-        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-blue-600"
-            style={{ width: `${truePercentage}%` }}
-          />
+      <div className="col-span-8">
+        <div>{content}</div>
+        <div className="flex gap-4 mt-1 text-sm text-gray-500">
+          <a
+            href={source}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-blue-600 underline"
+          >
+            Predicted in {prediction_date ? new Date(prediction_date).getFullYear() : 'TBD'}
+          </a>
+          <span>To come true in {evaluation_date ? new Date(evaluation_date).getFullYear() : 'TBD'}</span>
         </div>
-        <div className="text-xs text-gray-500 mt-1">
-          {totalVotes} votes | {truePercentage.toFixed(1)}% true
+      </div>
+      <div className="col-span-2">
+        <span className={`text-lg font-semibold ${
+          truePercentage >= 50 ? 'text-green-600' : 'text-red-600'
+        }`}>
+          {truePercentage.toFixed(0)}%
+        </span>
+        <div className="text-xs text-gray-500">
+          {totalVotes} votes
         </div>
       </div>
       <div className="col-span-2 flex gap-2">
