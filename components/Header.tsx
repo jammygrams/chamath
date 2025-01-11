@@ -30,7 +30,7 @@ export default function Header({ predictions }: HeaderProps) {
   const getTruthLevel = (percentage: number) => {
     if (percentage < 40) {
       return {
-        text: "❌ No way!",
+        text: "👎 Nah.",
         color: "bg-red-500"
       }
     }
@@ -41,7 +41,7 @@ export default function Header({ predictions }: HeaderProps) {
       }
     }
     return {
-      text: "✨ Maybe...",
+      text: "✨ Maybe he knows something...",
       color: "bg-green-500"
     }
   }
