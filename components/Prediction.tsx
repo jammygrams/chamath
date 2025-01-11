@@ -16,29 +16,30 @@ interface PredictionProps {
 
 export default function Prediction({ id, content, source, true_votes, false_votes, evaluation_date, prediction_date }: PredictionProps) {
   const [userVote, setUserVote] = useState<boolean | null>(null)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [fingerprint, setFingerprint] = useState<string | null>(null)
   const [localTrueVotes, setLocalTrueVotes] = useState(true_votes)
   const [localFalseVotes, setLocalFalseVotes] = useState(false_votes)
 
   useEffect(() => {
+    const checkUserVote = async (visitorId: string) => {
+      const { data } = await supabase
+        .from('votes')
+        .select('vote')
+        .eq('prediction_id', id)
+        .eq('fingerprint', visitorId)
+        .single()
+
+      if (data) {
+        setUserVote(data.vote)
+      }
+    }
+
     getFingerprint().then(visitorId => {
       setFingerprint(visitorId)
       checkUserVote(visitorId)
     })
   }, [id])
-
-  const checkUserVote = async (visitorId: string) => {
-    const { data } = await supabase
-      .from('votes')
-      .select('vote')
-      .eq('prediction_id', id)
-      .eq('fingerprint', visitorId)
-      .single()
-
-    if (data) {
-      setUserVote(data.vote)
-    }
-  }
 
   const handleVote = async (vote: boolean) => {
     const fingerprint = await getFingerprint()

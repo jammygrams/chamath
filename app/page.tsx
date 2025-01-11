@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import Prediction from '../components/Prediction'
 import Header from '../components/Header'
-import { getFingerprint } from '../lib/fingerprint'
 
 interface PredictionData {
   id: number
@@ -18,7 +17,6 @@ interface PredictionData {
 
 export default function Home() {
   const [predictions, setPredictions] = useState<PredictionData[]>([])
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetchPredictions()
@@ -52,8 +50,7 @@ export default function Home() {
   return (
     <div className="container mx-auto px-4 py-8">
       <Header predictions={predictions} />
-      {error && <p className="text-red-500 mb-4">{error}</p>}
-      {predictions.length === 0 && !error && <p>Loading predictions...</p>}
+      {predictions.length === 0 && <p>Loading predictions...</p>}
       <div className="w-full">
         <div className="grid grid-cols-12 gap-4 mb-4 font-semibold text-sm text-gray-600 px-4">
           <div className="col-span-5">Chamath predicts...</div>
