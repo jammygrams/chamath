@@ -74,29 +74,19 @@ export default function Prediction({ id, content, source, true_votes, false_vote
   const truePercentage = totalVotes > 0 ? (localTrueVotes / totalVotes) * 100 : 0
 
   return (
-    <div className="grid grid-cols-12 gap-4 items-center px-4 py-3 hover:bg-gray-50">
+    <div className="grid grid-cols-12 gap-4 items-center px-4 py-3 hover:bg-gray-800/40">
       <div className="col-span-8">
         <div>{content}</div>
-        <div className="flex gap-4 mt-1 text-sm text-gray-500">
+        <div className="flex gap-4 mt-1 text-sm text-gray-500 dark:text-gray-400">
           <a
             href={source}
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-blue-600 underline"
+            className="hover:text-blue-600 dark:hover:text-blue-400 underline"
           >
             Predicted in {prediction_date ? new Date(prediction_date).getFullYear() : 'TBD'}
           </a>
           <span>To come true in {evaluation_date ? new Date(evaluation_date).getFullYear() : 'TBD'}</span>
-        </div>
-      </div>
-      <div className="col-span-2">
-        <span className={`text-lg font-semibold ${
-          truePercentage >= 50 ? 'text-green-600' : 'text-red-600'
-        }`}>
-          {truePercentage.toFixed(0)}%
-        </span>
-        <div className="text-xs text-gray-500">
-          {totalVotes} votes
         </div>
       </div>
       <div className="col-span-2 flex gap-2">
@@ -105,9 +95,9 @@ export default function Prediction({ id, content, source, true_votes, false_vote
           className={`px-3 py-1 rounded text-sm transition-all ${
             userVote !== null 
               ? userVote === true 
-                ? 'opacity-100 border border-gray-400' 
+                ? 'opacity-100 border border-gray-400 dark:border-gray-600' 
                 : 'opacity-40'
-              : 'hover:bg-gray-50'
+              : 'hover:bg-gray-800/40'
           }`}
         >
           ✅
@@ -117,13 +107,23 @@ export default function Prediction({ id, content, source, true_votes, false_vote
           className={`px-3 py-1 rounded text-sm transition-all ${
             userVote !== null 
               ? userVote === false 
-                ? 'opacity-100 border border-gray-400' 
+                ? 'opacity-100 border border-gray-400 dark:border-gray-600' 
                 : 'opacity-40'
-              : 'hover:bg-gray-50'
+              : 'hover:bg-gray-800/40'
           }`}
         >
           ❌
         </button>
+      </div>
+      <div className="col-span-2">
+        <span className={`text-lg font-semibold ${
+          truePercentage >= 50 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+        }`}>
+          {truePercentage.toFixed(0)}%
+        </span>
+        <div className="text-xs text-gray-500 dark:text-gray-400">
+          {totalVotes} votes
+        </div>
       </div>
     </div>
   )

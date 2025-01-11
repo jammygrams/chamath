@@ -34,16 +34,16 @@ export default function Header({ predictions }: HeaderProps) {
   }
 
   return (
-    <div className="mb-8 text-center">
+    <div className="mb-8 text-center text-gray-100">
       <h1 className="text-3xl font-bold mb-6">Should you trust Chamath&apos;s predictions?</h1>
       <p className="text-2xl font-semibold mb-4">{getTitle()}</p>
-      <div className="w-full max-w-lg mx-auto bg-gray-200 rounded-full h-4">
+      <div className="w-full max-w-lg mx-auto bg-gray-700 rounded-full h-4">
         <div 
           className="bg-blue-600 h-4 rounded-full transition-all duration-500"
           style={{ width: `${truthPercentage}%` }}
         />
       </div>
-      <p className="text-sm text-gray-600 mt-2">
+      <p className="text-sm text-gray-400 mt-2">
         {truthPercentage.toFixed(1)}% of voted predictions have majority &quot;True&quot; votes
       </p>
     </div>

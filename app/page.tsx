@@ -48,14 +48,14 @@ export default function Home() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 min-h-screen">
       <Header predictions={predictions} />
-      {predictions.length === 0 && <p>Loading predictions...</p>}
+      {predictions.length === 0 && <p className="text-gray-400">Loading predictions...</p>}
       <div className="w-full">
-        <div className="grid grid-cols-12 gap-4 mb-4 font-semibold text-sm text-gray-600 px-4">
-          <div className="col-span-8">Chamath predicts...</div>
+        <div className="grid grid-cols-12 gap-4 mb-4 font-semibold text-sm text-gray-400 px-4">
+          <div className="col-span-8">Chamath predicted...</div>
+          <div className="col-span-2">Did this happen?</div>
           <div className="col-span-2">Results</div>
-          <div className="col-span-2">Vote</div>
         </div>
         {predictions.map(prediction => (
           <Prediction
