@@ -54,60 +54,55 @@ export default function Prediction({ id, index, content, source, true_votes, fal
   const truePercentage = totalVotes > 0 ? (localTrueVotes / totalVotes) * 100 : 0
 
   return (
-    <div className={`
-      grid grid-cols-12 gap-4 items-center px-4 py-3
-      hover:bg-gray-700/20
-      ${index % 2 === 0 ? 'bg-gray-800/40' : ''}
-      border-b border-gray-700
-    `}>
-      <div className="col-span-8">
-        <div>{content}</div>
-        <div className="flex gap-4 mt-1 text-sm text-gray-500 dark:text-gray-400">
-          <a
-            href={source}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-blue-600 dark:hover:text-blue-400 underline"
-          >
-            Predicted in {prediction_date ? new Date(prediction_date).getFullYear() : 'TBD'}
+    <div className="bg-gray-800 rounded-lg p-4 shadow-lg">
+      <div className="mb-4">
+        <p className="text-lg text-gray-100 mb-2">{content}</p>
+        <p className="text-sm text-gray-400">
+          <a href={source} target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
+            source ↗
           </a>
-          <span>To come true in {evaluation_date ? new Date(evaluation_date).getFullYear() : 'TBD'}</span>
+        </p>
+        <p className="text-sm text-gray-500 mt-2">
+          Predicted in {new Date(prediction_date).getFullYear()}, 
+          to come true in {new Date(evaluation_date).getFullYear()}
+        </p>
+      </div>
+      
+      <div className="flex flex-col sm:flex-row gap-4 items-center">
+        <div className="flex gap-2 w-full sm:w-auto">
+          <button
+            onClick={() => handleVote(true)}
+            className={`flex-1 sm:flex-none px-6 py-2 rounded-lg font-medium ${
+              userVote === true
+                ? 'bg-green-600 text-white'
+                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+            }`}
+          >
+            True
+          </button>
+          <button
+            onClick={() => handleVote(false)}
+            className={`flex-1 sm:flex-none px-6 py-2 rounded-lg font-medium ${
+              userVote === false
+                ? 'bg-red-600 text-white'
+                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+            }`}
+          >
+            False
+          </button>
         </div>
-      </div>
-      <div className="col-span-2 flex gap-2">
-        <button
-          onClick={() => handleVote(true)}
-          className={`px-3 py-1 rounded text-sm transition-all ${
-            userVote !== null 
-              ? userVote === true 
-                ? 'opacity-100 border border-gray-400 dark:border-gray-600' 
-                : 'opacity-40'
-              : 'hover:bg-gray-800/40'
-          }`}
-        >
-          ✅
-        </button>
-        <button
-          onClick={() => handleVote(false)}
-          className={`px-3 py-1 rounded text-sm transition-all ${
-            userVote !== null 
-              ? userVote === false 
-                ? 'opacity-100 border border-gray-400 dark:border-gray-600' 
-                : 'opacity-40'
-              : 'hover:bg-gray-800/40'
-          }`}
-        >
-          ❌
-        </button>
-      </div>
-      <div className="col-span-2">
-        <span className={`text-lg font-semibold ${
-          truePercentage >= 50 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
-        }`}>
-          {truePercentage.toFixed(0)}%
-        </span>
-        <div className="text-xs text-gray-500 dark:text-gray-400">
-          {totalVotes} votes
+
+        <div className="flex items-center gap-2 text-gray-300">
+          <div className="text-center">
+            <div className={`text-xl font-bold mb-1 ${
+              truePercentage >= 50 ? 'text-green-400' : 'text-red-400'
+            }`}>
+              {truePercentage.toFixed(0)}%
+            </div>
+            <div className="text-sm text-gray-400">
+              {totalVotes} votes
+            </div>
+          </div>
         </div>
       </div>
     </div>

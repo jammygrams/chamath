@@ -88,12 +88,7 @@ export default function Home() {
           <p className="text-gray-400">Loading predictions...</p>
         </div>
       ) : (
-        <div className="w-full">
-          <div className="grid grid-cols-12 gap-4 font-semibold text-base text-gray-400 px-4 border-b border-gray-700 pb-3">
-            <div className="col-span-8">Chamath predicted...</div>
-            <div className="col-span-2">Vote</div>
-            <div className="col-span-2">Results</div>
-          </div>
+        <div className="w-full space-y-4">
           {predictions.map((prediction, index) => (
             <Prediction
               key={prediction.id}
