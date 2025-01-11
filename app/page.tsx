@@ -24,7 +24,7 @@ export default function Home() {
     fetchPredictions()
     const subscription = supabase
       .channel('public:predictions')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'predictions' }, fetchPredictions)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'votes' }, fetchPredictions)
       .subscribe()
 
     return () => {
@@ -62,7 +62,7 @@ export default function Home() {
         return
       }
 
-      console.log('Fetched predictions:', data.map((p: PredictionData) => p.id))
+      console.log('Fetched predictions:', data.length)
       setPredictions(data)
     } catch (err) {
       console.error('Unexpected error:', err)
@@ -79,7 +79,7 @@ export default function Home() {
         </div>
       ) : (
         <div className="w-full">
-          <div className="grid grid-cols-12 gap-4 font-semibold text-sm text-gray-400 px-4 border-b border-gray-700 pb-3">
+          <div className="grid grid-cols-12 gap-4 font-semibold text-base text-gray-400 px-4 border-b border-gray-700 pb-3">
             <div className="col-span-8">Chamath predicted...</div>
             <div className="col-span-2">Vote</div>
             <div className="col-span-2">Results</div>
