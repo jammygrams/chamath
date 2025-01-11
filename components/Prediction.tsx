@@ -6,40 +6,20 @@ import { getFingerprint } from '../lib/fingerprint'
 
 interface PredictionProps {
   id: number
+  index: number
   content: string
   source: string
   true_votes: number
   false_votes: number
   evaluation_date: string
   prediction_date: string
+  userVote?: boolean
 }
 
-export default function Prediction({ id, content, source, true_votes, false_votes, evaluation_date, prediction_date }: PredictionProps) {
-  const [userVote, setUserVote] = useState<boolean | null>(null)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [fingerprint, setFingerprint] = useState<string | null>(null)
+export default function Prediction({ id, index, content, source, true_votes, false_votes, evaluation_date, prediction_date, userVote: initialUserVote }: PredictionProps) {
+  const [userVote, setUserVote] = useState<boolean | null>(initialUserVote ?? null)
   const [localTrueVotes, setLocalTrueVotes] = useState(true_votes)
   const [localFalseVotes, setLocalFalseVotes] = useState(false_votes)
-
-  useEffect(() => {
-    const checkUserVote = async (visitorId: string) => {
-      const { data } = await supabase
-        .from('votes')
-        .select('vote')
-        .eq('prediction_id', id)
-        .eq('fingerprint', visitorId)
-        .single()
-
-      if (data) {
-        setUserVote(data.vote)
-      }
-    }
-
-    getFingerprint().then(visitorId => {
-      setFingerprint(visitorId)
-      checkUserVote(visitorId)
-    })
-  }, [id])
 
   const handleVote = async (vote: boolean) => {
     const fingerprint = await getFingerprint()
@@ -74,7 +54,12 @@ export default function Prediction({ id, content, source, true_votes, false_vote
   const truePercentage = totalVotes > 0 ? (localTrueVotes / totalVotes) * 100 : 0
 
   return (
-    <div className="grid grid-cols-12 gap-4 items-center px-4 py-3 hover:bg-gray-800/40">
+    <div className={`
+      grid grid-cols-12 gap-4 items-center px-4 py-3
+      hover:bg-gray-700/20
+      ${index % 2 === 0 ? 'bg-gray-800/40' : ''}
+      border-b border-gray-700
+    `}>
       <div className="col-span-8">
         <div>{content}</div>
         <div className="flex gap-4 mt-1 text-sm text-gray-500 dark:text-gray-400">
