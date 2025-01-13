@@ -18,8 +18,6 @@ interface PredictionProps {
 
 export default function Prediction({ id, content, source, true_votes, false_votes, evaluation_date, prediction_date, userVote: initialUserVote }: PredictionProps) {
   const [userVote, setUserVote] = useState<boolean | null>(initialUserVote ?? null)
-  const [localTrueVotes, setLocalTrueVotes] = useState(true_votes)
-  const [localFalseVotes, setLocalFalseVotes] = useState(false_votes)
 
   const handleVote = async (vote: boolean) => {
     const fingerprint = await getFingerprint()
@@ -33,25 +31,12 @@ export default function Prediction({ id, content, source, true_votes, false_vote
       })
 
     if (!error) {
-      if (userVote !== null) {
-        if (userVote) {
-          setLocalTrueVotes(prev => prev - 1)
-        } else {
-          setLocalFalseVotes(prev => prev - 1)
-        }
-      }
-      
       setUserVote(vote)
-      if (vote) {
-        setLocalTrueVotes(prev => prev + 1)
-      } else {
-        setLocalFalseVotes(prev => prev + 1)
-      }
     }
   }
 
-  const totalVotes = localTrueVotes + localFalseVotes
-  const truePercentage = totalVotes > 0 ? (localTrueVotes / totalVotes) * 100 : 0
+  const totalVotes = true_votes + false_votes
+  const truePercentage = totalVotes > 0 ? (true_votes / totalVotes) * 100 : 0
 
   return (
     <div className="bg-gray-800 rounded-lg p-4 shadow-lg">
