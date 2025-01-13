@@ -1,5 +1,7 @@
 'use client'
 
+import Image from 'next/image'
+
 interface HeaderProps {
   predictions: {
     true_votes: number
@@ -50,8 +52,17 @@ export default function Header({ predictions }: HeaderProps) {
 
   return (
     <div className="min-h-[35vh] flex flex-col justify-center mb-8 text-center text-gray-100">
-      <h1 className="text-4xl md:text-5xl font-extrabold mb-8 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-        Should you trust Chamath&apos;s predictions?
+      <h1 className="text-4xl md:text-5xl font-extrabold mb-2 flex items-center justify-center md:justify-center gap-6 md:gap-8">
+        <Image
+          src="/chamath_cropped.png"
+          alt="Chamath"
+          width={96}
+          height={96}
+          className="rounded-full inline-block"
+        />
+        <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent text-left md:text-center">
+          Should you trust Chamath
+        </span>
       </h1>
       <p className="text-3xl md:text-4xl font-bold mb-6">
         {truthLevel.text}
@@ -62,9 +73,11 @@ export default function Header({ predictions }: HeaderProps) {
           style={{ width: `${truthPercentage}%` }}
         />
       </div>
-      <p className="text-lg font-medium text-gray-300 mt-4">
-        {truthPercentage.toFixed(0)}% of his predictions are voted true 📊
-      </p>
+      <div className="text-lg font-medium mt-4">
+        <p className="text-gray-300">
+          {truthPercentage.toFixed(0)}% of his predictions came true.
+        </p>
+      </div>
     </div>
   )
 } 
