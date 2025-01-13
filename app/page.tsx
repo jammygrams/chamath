@@ -28,18 +28,18 @@ export default function Home() {
         getFingerprint()
       ])
 
+      if (predictionsResult.data) {
+        console.log('Vote counts updated')
+        setPredictions(predictionsResult.data)
+      }
+
       const votesResult = await supabase
         .from('votes')
         .select('prediction_id, vote')
         .eq('fingerprint', visitorId)
 
-      if (predictionsResult.data) {
-        console.log('Updating predictions:', predictionsResult.data.length)
-        setPredictions(predictionsResult.data)
-      }
-
       if (votesResult.data) {
-        const votesMap = votesResult.data.reduce((acc, vote) => ({
+          const votesMap = votesResult.data.reduce((acc: Record<number, boolean>, vote: { prediction_id: number; vote: boolean }) => ({
           ...acc,
           [vote.prediction_id]: vote.vote
         }), {})
@@ -66,7 +66,7 @@ export default function Home() {
         'postgres_changes',
         { event: '*', schema: 'public', table: 'votes' },
         (payload) => {
-          console.log('Received vote change:', payload)
+          console.log('Vote change detected:', payload)
           fetchLatestData()
         }
       )
@@ -74,7 +74,10 @@ export default function Home() {
         console.log('Subscription status:', status)
       })
 
+    console.log('Subscription set up for votes table')
+
     return () => {
+      console.log('Unsubscribing from votes table')
       subscription.unsubscribe()
     }
   }, [])
