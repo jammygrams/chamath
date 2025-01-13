@@ -83,31 +83,53 @@ export default function Home() {
   }, [])
 
   return (
-    <div className="container mx-auto px-4 py-8 min-h-screen">
-      <Header predictions={predictions} />
-      {isLoading ? (
-        <div className="flex flex-col items-center justify-center h-[50vh]">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 mb-4"></div>
-          <p className="text-gray-400">Loading predictions...</p>
+    <div className="container mx-auto px-4 py-8 min-h-screen flex flex-col">
+      <div className="flex-grow">
+        <Header predictions={predictions} />
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center h-[50vh]">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 mb-4"></div>
+            <p className="text-gray-400">Loading predictions...</p>
+          </div>
+        ) : (
+          <div className="w-full space-y-4">
+            {predictions.map((prediction, index) => (
+              <Prediction
+                key={prediction.id}
+                id={prediction.id}
+                index={index}
+                content={prediction.content}
+                source={prediction.source}
+                true_votes={prediction.true_votes}
+                false_votes={prediction.false_votes}
+                evaluation_date={prediction.evaluation_date}
+                prediction_date={prediction.prediction_date}
+                userVote={userVotes[prediction.id]}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+      
+      <footer className="text-center text-gray-400 text-sm py-8">
+        <div className="flex justify-center items-center gap-4">
+          <a 
+            href="https://github.com/jammygrams/chamath" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="hover:text-gray-300"
+          >
+            GitHub ↗
+          </a>
+          <span>•</span>
+          <a 
+            href="mailto:jmahbubani@gmail.com"
+            className="hover:text-gray-300"
+          >
+            Contact
+          </a>
         </div>
-      ) : (
-        <div className="w-full space-y-4">
-          {predictions.map((prediction, index) => (
-            <Prediction
-              key={prediction.id}
-              id={prediction.id}
-              index={index}
-              content={prediction.content}
-              source={prediction.source}
-              true_votes={prediction.true_votes}
-              false_votes={prediction.false_votes}
-              evaluation_date={prediction.evaluation_date}
-              prediction_date={prediction.prediction_date}
-              userVote={userVotes[prediction.id]}
-            />
-          ))}
-        </div>
-      )}
+      </footer>
     </div>
   )
 }

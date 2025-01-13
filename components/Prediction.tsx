@@ -42,15 +42,15 @@ export default function Prediction({ id, content, source, true_votes, false_vote
     <div className="bg-gray-800 rounded-lg p-4 shadow-lg">
       <div className="mb-4">
         <p className="text-lg text-gray-100 mb-2">{content}</p>
-        <p className="text-sm text-gray-400">
-          <a href={source} target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
+        <div className="text-sm flex gap-2 items-center">
+          <a href={source} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-300">
             source ↗
           </a>
-        </p>
-        <p className="text-sm text-gray-500 mt-2">
-          Predicted in {new Date(prediction_date).getFullYear()}, 
-          to come true in {new Date(evaluation_date).getFullYear()}
-        </p>
+          <span className="text-gray-500">
+            • Predicted in {new Date(prediction_date).getFullYear()}, 
+            to come true in {new Date(evaluation_date).getFullYear()}
+          </span>
+        </div>
       </div>
       
       <div className="flex flex-col sm:flex-row gap-4 items-center">
