@@ -61,7 +61,7 @@ export default function Header({ predictions }: HeaderProps) {
           className="rounded-full inline-block"
         />
         <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent text-left md:text-center">
-          Should you trust Chamath
+          Should you trust Chamath?
         </span>
       </h1>
       <p className="text-3xl md:text-4xl font-bold mb-6">
