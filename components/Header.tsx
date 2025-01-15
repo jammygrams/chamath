@@ -1,33 +1,35 @@
 'use client'
 
 import Image from 'next/image'
+import { useMemo } from 'react'
 
 interface HeaderProps {
   predictions: {
     true_votes: number
     false_votes: number
+    decision: boolean | null
   }[]
 }
 
 export default function Header({ predictions }: HeaderProps) {
-  const getTruthPercentage = () => {
-    if (predictions.length === 0) return 0
-    
-    const predictionsWithVotes = predictions.filter(p => 
-      p.true_votes + p.false_votes > 0
-    )
-    
-    if (predictionsWithVotes.length === 0) return 0
-    
-    const predictionsWithMajorityTrue = predictionsWithVotes.filter(p => {
-      const total = p.true_votes + p.false_votes
-      return p.true_votes / total > 0.5
-    }).length
+  const truthPercentage = useMemo(() => {
+    const totalPredictions = predictions.length
+    if (totalPredictions === 0) return 0
 
-    return (predictionsWithMajorityTrue / predictionsWithVotes.length) * 100
-  }
+    const truePredictions = predictions.reduce((count, pred) => {
+      if (pred.decision !== null) {
+        // For decided predictions, use the decision
+        return count + (pred.decision ? 1 : 0)
+      } else {
+        // For undecided predictions, use vote counts
+        const totalVotes = pred.true_votes + pred.false_votes
+        const truePercentage = totalVotes > 0 ? (pred.true_votes / totalVotes) * 100 : 0
+        return count + (truePercentage >= 50 ? 1 : 0)
+      }
+    }, 0)
 
-  const truthPercentage = getTruthPercentage()
+    return (truePredictions / totalPredictions) * 100
+  }, [predictions])
 
   const getTruthLevel = (percentage: number) => {
     if (percentage < 40) {

@@ -7,7 +7,6 @@ import { LinkIcon } from '@heroicons/react/24/outline'
 
 interface PredictionProps {
   id: number
-  index: number
   content: string
   source: string
   true_votes: number
@@ -15,9 +14,10 @@ interface PredictionProps {
   evaluation_date: string
   prediction_date: string
   userVote?: boolean
+  decision: boolean | null
 }
 
-export default function Prediction({ id, content, source, true_votes, false_votes, evaluation_date, prediction_date, userVote: initialUserVote }: PredictionProps) {
+export default function Prediction({ id, content, source, true_votes, false_votes, evaluation_date, prediction_date, userVote: initialUserVote, decision }: PredictionProps) {
   const [userVote, setUserVote] = useState<boolean | null>(initialUserVote ?? null)
 
   const handleVote = async (vote: boolean) => {
@@ -55,41 +55,53 @@ export default function Prediction({ id, content, source, true_votes, false_vote
       </div>
       
       <div className="flex flex-col sm:flex-row gap-4 items-center">
-        <div className="flex gap-2 w-full sm:w-auto">
-          <button
-            onClick={() => handleVote(true)}
-            className={`flex-1 sm:flex-none px-6 py-2 rounded-lg font-medium ${
-              userVote === true
-                ? 'bg-green-600 text-white'
-                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-            }`}
-          >
-            True
-          </button>
-          <button
-            onClick={() => handleVote(false)}
-            className={`flex-1 sm:flex-none px-6 py-2 rounded-lg font-medium ${
-              userVote === false
-                ? 'bg-red-600 text-white'
-                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-            }`}
-          >
-            False
-          </button>
-        </div>
-
-        <div className="flex items-center gap-2 text-gray-300">
-          <div className="text-center">
-            <div className={`text-xl font-bold mb-1 ${
-              truePercentage >= 50 ? 'text-green-400' : 'text-red-400'
-            }`}>
-              {truePercentage.toFixed(0)}%
+        {console.log('Decision value:', { id, decision, type: typeof decision })}
+        {decision !== null ? (
+          <div className="text-center w-full">
+            <div className={`text-xl font-bold ${decision ? 'text-green-400' : 'text-red-400'}`}>
+              {decision ? 'True' : 'False'}
             </div>
-            <div className="text-sm text-gray-400">
-              {totalVotes} votes
-            </div>
+            <div className="text-sm text-gray-400">Final decision</div>
           </div>
-        </div>
+        ) : (
+          <>
+            <div className="flex gap-2 w-full sm:w-auto">
+              <button
+                onClick={() => handleVote(true)}
+                className={`flex-1 sm:flex-none px-6 py-2 rounded-lg font-medium ${
+                  userVote === true
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                True
+              </button>
+              <button
+                onClick={() => handleVote(false)}
+                className={`flex-1 sm:flex-none px-6 py-2 rounded-lg font-medium ${
+                  userVote === false
+                    ? 'bg-red-600 text-white'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                False
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2 text-gray-300">
+              <div className="text-center">
+                <div className={`text-xl font-bold mb-1 ${
+                  truePercentage >= 50 ? 'text-green-400' : 'text-red-400'
+                }`}>
+                  {truePercentage.toFixed(0)}%
+                </div>
+                <div className="text-sm text-gray-400">
+                  {totalVotes} votes
+                </div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   )

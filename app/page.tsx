@@ -14,6 +14,7 @@ interface PredictionData {
   false_votes: number
   evaluation_date: string
   prediction_date: string
+  decision: boolean | null
 }
 
 export default function Home() {
@@ -93,11 +94,10 @@ export default function Home() {
           </div>
         ) : (
           <div className="w-full space-y-4">
-            {predictions.map((prediction, index) => (
+            {predictions.map((prediction) => (
               <Prediction
                 key={prediction.id}
                 id={prediction.id}
-                index={index}
                 content={prediction.content}
                 source={prediction.source}
                 true_votes={prediction.true_votes}
@@ -105,6 +105,7 @@ export default function Home() {
                 evaluation_date={prediction.evaluation_date}
                 prediction_date={prediction.prediction_date}
                 userVote={userVotes[prediction.id]}
+                decision={prediction.decision}
               />
             ))}
           </div>
