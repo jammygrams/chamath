@@ -1,6 +1,17 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { getFingerprint } from '@/lib/fingerprint'
+import { uniqueNamesGenerator, Config, adjectives, animals } from 'unique-names-generator';
+
+const generateUsername = (fingerprint: string) => {
+  const config: Config = {
+    dictionaries: [adjectives, animals],
+    separator: ' ',
+    length: 2,
+    seed: fingerprint,
+  }
+  return uniqueNamesGenerator(config)
+}
 
 interface Comment {
   id: number
@@ -14,6 +25,9 @@ export default function Comments({ predictionId }: { predictionId: number }) {
   const [comments, setComments] = useState<Comment[]>([])
   const [newComment, setNewComment] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editContent, setEditContent] = useState('')
+  const [userFingerprint, setUserFingerprint] = useState<string | null>(null)
 
   const fetchComments = useCallback(async () => {
     const { data } = await supabase
@@ -44,7 +58,37 @@ export default function Comments({ predictionId }: { predictionId: number }) {
     }
   }
 
+  const handleEdit = async (commentId: number) => {
+    if (!editContent.trim()) return
+    const { error } = await supabase
+      .from('comments')
+      .update({ content: editContent.trim() })
+      .eq('id', commentId)
+      .eq('fingerprint', userFingerprint)
+
+    if (!error) {
+      setEditingId(null)
+      fetchComments()
+    }
+  }
+
+  const handleDelete = async (commentId: number) => {
+    if (!confirm('Are you sure you want to delete this comment?')) return
+    
+    const { error } = await supabase
+      .from('comments')
+      .delete()
+      .eq('id', commentId)
+      .eq('fingerprint', userFingerprint)
+
+    if (!error) {
+      fetchComments()
+    }
+  }
+
   useEffect(() => {
+    getFingerprint().then(setUserFingerprint)
+    
     if (isOpen) {
       setIsLoading(true)
       fetchComments().finally(() => setIsLoading(false))
@@ -98,12 +142,64 @@ export default function Comments({ predictionId }: { predictionId: number }) {
             <div className="space-y-3">
               {comments.map((comment) => (
                 <div key={comment.id} className="bg-gray-700/50 rounded p-3">
-                  <p className="text-gray-200 break-words">
-                    {formatTextWithLinks(comment.content)}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {new Date(comment.created_at).toLocaleDateString()}
-                  </p>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-blue-400">
+                        {generateUsername(comment.fingerprint)}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {new Date(comment.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                    {comment.fingerprint === userFingerprint && (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => {
+                            setEditingId(comment.id)
+                            setEditContent(comment.content)
+                          }}
+                          className="text-xs text-gray-400 hover:text-gray-300"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(comment.id)}
+                          className="text-xs text-red-400 hover:text-red-300"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  {editingId === comment.id ? (
+                    <div>
+                      <textarea
+                        value={editContent}
+                        onChange={(e) => setEditContent(e.target.value)}
+                        className="w-full bg-gray-700 rounded p-2 text-gray-200 placeholder-gray-500 resize-none mb-2"
+                        rows={3}
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleEdit(comment.id)}
+                          disabled={!editContent.trim()}
+                          className="px-3 py-1 text-sm bg-blue-600 text-white rounded disabled:opacity-50"
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={() => setEditingId(null)}
+                          className="px-3 py-1 text-sm bg-gray-600 text-white rounded"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-gray-200 break-words">
+                      {formatTextWithLinks(comment.content)}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>
