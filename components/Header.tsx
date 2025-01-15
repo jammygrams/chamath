@@ -13,22 +13,25 @@ interface HeaderProps {
 
 export default function Header({ predictions }: HeaderProps) {
   const truthPercentage = useMemo(() => {
-    const totalPredictions = predictions.length
-    if (totalPredictions === 0) return 0
+    const validPredictions = predictions.filter(pred => 
+      pred.decision !== null || (pred.true_votes + pred.false_votes) > 0
+    )
+    
+    if (validPredictions.length === 0) return 0
 
-    const truePredictions = predictions.reduce((count, pred) => {
+    const truePredictions = validPredictions.reduce((count, pred) => {
       if (pred.decision !== null) {
-        // For decided predictions, use the decision
+        // For decided predictions, use the decision value
         return count + (pred.decision ? 1 : 0)
       } else {
         // For undecided predictions, use vote counts
         const totalVotes = pred.true_votes + pred.false_votes
-        const truePercentage = totalVotes > 0 ? (pred.true_votes / totalVotes) * 100 : 0
+        const truePercentage = (pred.true_votes / totalVotes) * 100
         return count + (truePercentage >= 50 ? 1 : 0)
       }
     }, 0)
 
-    return (truePredictions / totalPredictions) * 100
+    return (truePredictions / validPredictions.length) * 100
   }, [predictions])
 
   const getTruthLevel = (percentage: number) => {
