@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { getFingerprint } from '../lib/fingerprint'
+import { LinkIcon } from '@heroicons/react/24/outline'
 
 interface PredictionProps {
   id: number
@@ -41,15 +42,15 @@ export default function Prediction({ id, content, source, true_votes, false_vote
   return (
     <div className="bg-gray-800 rounded-lg p-4 shadow-lg">
       <div className="mb-4">
-        <p className="text-lg text-gray-100 mb-2">{content}</p>
-        <div className="text-sm flex gap-2 items-center">
-          <a href={source} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-300">
-            source ↗
+        <p className="text-lg text-gray-100 mb-2">
+          {content}{' '}
+          <a href={source} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-300 inline-flex">
+            <LinkIcon className="w-4 h-4" />
           </a>
-          <span className="text-gray-500">
-            • Predicted in {new Date(prediction_date).getFullYear()}, 
-            to come true in {new Date(evaluation_date).getFullYear()}
-          </span>
+        </p>
+        <div className="text-sm text-gray-500">
+          Predicted in {new Date(prediction_date).getFullYear()}, 
+          to come true in {new Date(evaluation_date).getFullYear()}
         </div>
       </div>
       
