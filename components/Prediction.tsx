@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { getFingerprint } from '../lib/fingerprint'
 import { LinkIcon } from '@heroicons/react/24/outline'
+import Comments from './Comments'
 
 interface PredictionProps {
   id: number
@@ -104,6 +105,7 @@ export default function Prediction({ id, content, source, true_votes, false_vote
           </>
         )}
       </div>
+      <Comments predictionId={id} />
     </div>
   )
 }
