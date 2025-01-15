@@ -55,7 +55,6 @@ export default function Prediction({ id, content, source, true_votes, false_vote
       </div>
       
       <div className="flex flex-col sm:flex-row gap-4 items-center">
-        {console.log('Decision value:', { id, decision, type: typeof decision })}
         {decision !== null ? (
           <div className="text-center w-full">
             <div className={`text-xl font-bold ${decision ? 'text-green-400' : 'text-red-400'}`}>
@@ -91,9 +90,11 @@ export default function Prediction({ id, content, source, true_votes, false_vote
             <div className="flex items-center gap-2 text-gray-300">
               <div className="text-center">
                 <div className={`text-xl font-bold mb-1 ${
-                  truePercentage >= 50 ? 'text-green-400' : 'text-red-400'
+                  totalVotes === 0 
+                    ? 'text-gray-500' 
+                    : truePercentage >= 50 ? 'text-green-400' : 'text-red-400'
                 }`}>
-                  {truePercentage.toFixed(0)}%
+                  {totalVotes === 0 ? '-' : `${truePercentage.toFixed(0)}%`}
                 </div>
                 <div className="text-sm text-gray-400">
                   {totalVotes} votes
