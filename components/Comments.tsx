@@ -51,6 +51,26 @@ export default function Comments({ predictionId }: { predictionId: number }) {
     }
   }, [isOpen, fetchComments])
 
+  const formatTextWithLinks = (text: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g
+    return text.split(urlRegex).map((part, i) => {
+      if (part.match(urlRegex)) {
+        return (
+          <a 
+            key={i}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:text-blue-300 underline"
+          >
+            {part}
+          </a>
+        )
+      }
+      return part
+    })
+  }
+
   return (
     <div className="mt-4 border-t border-gray-700 pt-4">
       <button
@@ -78,7 +98,9 @@ export default function Comments({ predictionId }: { predictionId: number }) {
             <div className="space-y-3">
               {comments.map((comment) => (
                 <div key={comment.id} className="bg-gray-700/50 rounded p-3">
-                  <p className="text-gray-200">{comment.content}</p>
+                  <p className="text-gray-200 break-words">
+                    {formatTextWithLinks(comment.content)}
+                  </p>
                   <p className="text-xs text-gray-500 mt-1">
                     {new Date(comment.created_at).toLocaleDateString()}
                   </p>
