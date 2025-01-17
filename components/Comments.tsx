@@ -61,10 +61,11 @@ export default function Comments({ predictionId }: { predictionId: number }) {
   const handleEdit = async (commentId: number) => {
     if (!editContent.trim()) return
     const { error } = await supabase
-      .from('comments')
-      .update({ content: editContent.trim() })
-      .eq('id', commentId)
-      .eq('fingerprint', userFingerprint)
+      .rpc('handle_comment_edit', {
+        p_comment_id: commentId,
+        p_fingerprint: userFingerprint,
+        p_content: editContent.trim()
+      })
 
     if (!error) {
       setEditingId(null)
