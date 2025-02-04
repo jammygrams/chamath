@@ -26,15 +26,18 @@ export default function Prediction({ id, content, source, true_votes, false_vote
     const fingerprint = await getFingerprint()
     if (!fingerprint) return
 
+    // If clicking the same vote again, remove it
+    const isRemovingVote = vote === userVote
+
     const { error } = await supabase
       .rpc('handle_vote', {
         p_prediction_id: id,
         p_fingerprint: fingerprint,
-        p_vote: vote
+        p_vote: isRemovingVote ? null : vote
       })
 
     if (!error) {
-      setUserVote(vote)
+      setUserVote(isRemovingVote ? null : vote)
     }
   }
 
