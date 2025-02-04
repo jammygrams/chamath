@@ -58,15 +58,25 @@ export default function Header({ predictions }: HeaderProps) {
   return (
     <div className="min-h-[35vh] flex flex-col justify-center mb-8 text-center text-gray-100">
       <h1 className="text-4xl md:text-5xl font-extrabold mb-2 flex items-center justify-center md:justify-center gap-6 md:gap-8">
-        <Image
-          src="/chamath_cropped.png"
-          alt="Chamath"
-          width={96}
-          height={96}
-          className="rounded-full inline-block"
-        />
+        <a 
+          href="https://en.wikipedia.org/wiki/Chamath_Palihapitiya"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            src="/chamath_cropped.png"
+            alt="Chamath"
+            width={96}
+            height={96}
+            className="rounded-full inline-block"
+          />
+        </a>
         <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent text-left md:text-center">
-          Should you trust Chamath?
+          Should you trust <a 
+            href="https://en.wikipedia.org/wiki/Chamath_Palihapitiya"
+            target="_blank"
+            rel="noopener noreferrer"
+          >Chamath</a>&apos;s Predictions?
         </span>
       </h1>
       <p className="text-3xl md:text-4xl font-bold mb-6">

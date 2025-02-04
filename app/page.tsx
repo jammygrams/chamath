@@ -96,30 +96,29 @@ export default function Home() {
     <div className="container mx-auto px-4 py-8 min-h-screen flex flex-col">
       <div className="flex-grow">
         <Header predictions={predictions} />
-        {isLoading ? (
-          <div className="flex flex-col items-center justify-center h-[50vh]">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 mb-4"></div>
-            <p className="text-gray-400">Loading predictions...</p>
-          </div>
-        ) : (
-          <div className="w-full space-y-4">
-            {predictions.map((prediction) => (
-              <Prediction
-                key={prediction.id}
-                id={prediction.id}
-                content={prediction.content}
-                source={prediction.source}
-                true_votes={prediction.true_votes}
-                false_votes={prediction.false_votes}
-                evaluation_date={prediction.evaluation_date}
-                prediction_date={prediction.prediction_date}
-                userVote={userVotes[prediction.id]}
-                decision={prediction.decision}
-                commentCount={commentCounts[prediction.id] || 0}
-              />
-            ))}
-          </div>
-        )}
+        <h2 className="text-2xl font-bold text-gray-100 mb-2">
+          Here&apos;s what he predicted...
+        </h2>
+        <p className="text-gray-400 mb-6">
+          Vote or contribute evidence to settle whether his prediction came true or not
+        </p>
+        <div className="space-y-6">
+          {predictions.map((prediction) => (
+            <Prediction
+              key={prediction.id}
+              id={prediction.id}
+              content={prediction.content}
+              source={prediction.source}
+              true_votes={prediction.true_votes}
+              false_votes={prediction.false_votes}
+              evaluation_date={prediction.evaluation_date}
+              prediction_date={prediction.prediction_date}
+              userVote={userVotes[prediction.id]}
+              decision={prediction.decision}
+              commentCount={commentCounts[prediction.id] || 0}
+            />
+          ))}
+        </div>
       </div>
       
       <footer className="text-center text-gray-400 text-sm py-8">

@@ -65,7 +65,9 @@ export default function Prediction({ id, content, source, true_votes, false_vote
             <div className={`text-xl font-bold ${decision ? 'text-green-400' : 'text-red-400'}`}>
               {decision ? 'True' : 'False'}
             </div>
-            <div className="text-sm text-gray-400">Final decision</div>
+            <div className="text-sm text-gray-400">
+              Conclusive evidence
+            </div>
           </div>
         ) : (
           <>
