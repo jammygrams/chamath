@@ -15,6 +15,7 @@ interface PredictionData {
   evaluation_date: string
   prediction_date: string
   decision: boolean | null
+  category: string
 }
 
 export default function Home() {
@@ -22,6 +23,7 @@ export default function Home() {
   const [userVotes, setUserVotes] = useState<Record<number, boolean>>({})
   const [isLoading, setIsLoading] = useState(true)
   const [commentCounts, setCommentCounts] = useState<Record<number, number>>({})
+  const [activeTab, setActiveTab] = useState<'all' | 'business' | 'politics'>('all')
 
   const fetchLatestData = async () => {
     try {
@@ -92,6 +94,10 @@ export default function Home() {
     }
   }, [])
 
+  const filteredPredictions = predictions.filter(prediction => 
+    activeTab === 'all' || prediction.category.toLowerCase() === activeTab
+  )
+
   return (
     <div className="container mx-auto px-4 py-8 min-h-screen flex flex-col">
       <div className="flex-grow">
@@ -108,8 +114,42 @@ export default function Home() {
             <p className="text-gray-400 mb-6">
               Vote or contribute evidence to settle whether his prediction came true or not
             </p>
+
+            <div className="flex gap-4 mb-8">
+              <button
+                onClick={() => setActiveTab('all')}
+                className={`px-4 py-2 rounded-lg ${
+                  activeTab === 'all' 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                All
+              </button>
+              <button
+                onClick={() => setActiveTab('business')}
+                className={`px-4 py-2 rounded-lg ${
+                  activeTab === 'business' 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                Business
+              </button>
+              <button
+                onClick={() => setActiveTab('politics')}
+                className={`px-4 py-2 rounded-lg ${
+                  activeTab === 'politics' 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                Politics
+              </button>
+            </div>
+
             <div className="space-y-6">
-              {predictions.map((prediction) => (
+              {filteredPredictions.map((prediction) => (
                 <Prediction
                   key={prediction.id}
                   id={prediction.id}
@@ -122,6 +162,7 @@ export default function Home() {
                   userVote={userVotes[prediction.id]}
                   decision={prediction.decision}
                   commentCount={commentCounts[prediction.id] || 0}
+                  category={prediction.category}
                 />
               ))}
             </div>
