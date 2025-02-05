@@ -115,36 +115,36 @@ export default function Home() {
               Vote or contribute evidence to settle whether his prediction came true or not
             </p>
 
-            <div className="flex gap-4 mb-8">
+            <div className="flex gap-1 mb-8 border-b border-gray-700">
               <button
                 onClick={() => setActiveTab('all')}
-                className={`px-4 py-2 rounded-lg ${
+                className={`px-6 py-2 rounded-t-lg ${
                   activeTab === 'all' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    ? 'bg-gray-800 text-white border-t border-l border-r border-gray-700' 
+                    : 'bg-gray-900 text-gray-400 hover:text-gray-300'
                 }`}
               >
                 All
               </button>
               <button
                 onClick={() => setActiveTab('business')}
-                className={`px-4 py-2 rounded-lg ${
+                className={`px-6 py-2 rounded-t-lg ${
                   activeTab === 'business' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    ? 'bg-gray-800 text-white border-t border-l border-r border-gray-700' 
+                    : 'bg-gray-900 text-gray-400 hover:text-gray-300'
                 }`}
               >
-                Business
+                💼 Business
               </button>
               <button
                 onClick={() => setActiveTab('politics')}
-                className={`px-4 py-2 rounded-lg ${
+                className={`px-6 py-2 rounded-t-lg ${
                   activeTab === 'politics' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    ? 'bg-gray-800 text-white border-t border-l border-r border-gray-700' 
+                    : 'bg-gray-900 text-gray-400 hover:text-gray-300'
                 }`}
               >
-                Politics
+                👑 Politics 
               </button>
             </div>
 

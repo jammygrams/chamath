@@ -49,6 +49,7 @@ export default function Prediction({ id, content, source, true_votes, false_vote
     <div className="bg-gray-800 rounded-lg p-4 shadow-lg">
       <div className="mb-4">
         <p className="text-lg text-gray-100 mb-2">
+          {category.toLowerCase() === 'business' ? '💼 ' : '👑 '}
           {content}{' '}
           <a href={source} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-300 inline-flex">
             <LinkIcon className="w-4 h-4" />
