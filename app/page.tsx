@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { supabase } from '../lib/supabase'
 import Prediction from '../components/Prediction'
 import Header from '../components/Header'
@@ -24,6 +24,14 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true)
   const [commentCounts, setCommentCounts] = useState<Record<number, number>>({})
   const [activeTab, setActiveTab] = useState<'all' | 'business' | 'politics'>('all')
+  const [selectedYear, setSelectedYear] = useState<string>('all')
+
+  const years = useMemo(() => {
+    const uniqueYears = new Set(predictions.map(p => 
+      new Date(p.evaluation_date).getFullYear()
+    ))
+    return ['all', ...Array.from(uniqueYears).sort()]
+  }, [predictions])
 
   const fetchLatestData = async () => {
     try {
@@ -95,7 +103,8 @@ export default function Home() {
   }, [])
 
   const filteredPredictions = predictions.filter(prediction => 
-    activeTab === 'all' || prediction.category.toLowerCase() === activeTab
+    (activeTab === 'all' || prediction.category.toLowerCase() === activeTab) &&
+    (selectedYear === 'all' || new Date(prediction.evaluation_date).getFullYear().toString() === selectedYear)
   )
 
   return (
@@ -115,37 +124,51 @@ export default function Home() {
               Vote or contribute evidence to settle whether his prediction came true or not
             </p>
 
-            <div className="flex gap-1 mb-8 border-b border-gray-700">
-              <button
-                onClick={() => setActiveTab('all')}
-                className={`px-6 py-2 rounded-t-lg ${
-                  activeTab === 'all' 
-                    ? 'bg-gray-800 text-white border-t border-l border-r border-gray-700' 
-                    : 'bg-gray-900 text-gray-400 hover:text-gray-300'
-                }`}
+            <div className="flex justify-between items-center mb-8 border-b border-gray-700">
+              <div className="flex gap-1">
+                <button
+                  onClick={() => setActiveTab('all')}
+                  className={`px-6 py-2 rounded-t-lg ${
+                    activeTab === 'all' 
+                      ? 'bg-gray-800 text-white border-t border-l border-r border-gray-700' 
+                      : 'bg-gray-900 text-gray-400 hover:text-gray-300'
+                  }`}
+                >
+                  All
+                </button>
+                <button
+                  onClick={() => setActiveTab('business')}
+                  className={`px-6 py-2 rounded-t-lg ${
+                    activeTab === 'business' 
+                      ? 'bg-gray-800 text-white border-t border-l border-r border-gray-700' 
+                      : 'bg-gray-900 text-gray-400 hover:text-gray-300'
+                  }`}
+                >
+                  💼 Business
+                </button>
+                <button
+                  onClick={() => setActiveTab('politics')}
+                  className={`px-6 py-2 rounded-t-lg ${
+                    activeTab === 'politics' 
+                      ? 'bg-gray-800 text-white border-t border-l border-r border-gray-700' 
+                      : 'bg-gray-900 text-gray-400 hover:text-gray-300'
+                  }`}
+                >
+                  👑 Politics
+                </button>
+              </div>
+              
+              <select
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(e.target.value)}
+                className="bg-gray-800 text-gray-300 px-4 py-2 rounded-lg border border-gray-700"
               >
-                All
-              </button>
-              <button
-                onClick={() => setActiveTab('business')}
-                className={`px-6 py-2 rounded-t-lg ${
-                  activeTab === 'business' 
-                    ? 'bg-gray-800 text-white border-t border-l border-r border-gray-700' 
-                    : 'bg-gray-900 text-gray-400 hover:text-gray-300'
-                }`}
-              >
-                💼 Business
-              </button>
-              <button
-                onClick={() => setActiveTab('politics')}
-                className={`px-6 py-2 rounded-t-lg ${
-                  activeTab === 'politics' 
-                    ? 'bg-gray-800 text-white border-t border-l border-r border-gray-700' 
-                    : 'bg-gray-900 text-gray-400 hover:text-gray-300'
-                }`}
-              >
-                👑 Politics 
-              </button>
+                {years.map(year => (
+                  <option key={year} value={year}>
+                    {year === 'all' ? 'All Years' : year}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="space-y-6">
