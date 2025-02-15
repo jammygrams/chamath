@@ -85,9 +85,6 @@ export default function Home() {
             <h2 className="text-2xl font-bold text-gray-100 mb-2">
               Here&apos;s what he predicted...
             </h2>
-            <p className="text-gray-400 mb-6">
-              Vote or contribute evidence to settle whether his prediction came true or not
-            </p>
 
             <div className="flex justify-between items-center mb-8 border-b border-gray-700">
               <div className="flex gap-1">

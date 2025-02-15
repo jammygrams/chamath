@@ -76,7 +76,7 @@ export default function Header({ predictions }: HeaderProps) {
             href="https://en.wikipedia.org/wiki/Chamath_Palihapitiya"
             target="_blank"
             rel="noopener noreferrer"
-          >Chamath</a>&apos;s Predictions?
+          >Chamath</a>&apos;s predictions?
         </span>
       </h1>
       <p className="text-3xl md:text-4xl font-bold mb-6">

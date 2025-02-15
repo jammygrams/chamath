@@ -29,19 +29,18 @@ export default function Prediction({
     <div className="bg-gray-800 rounded-lg p-6">
       <div className="mb-4">
         <p className="text-lg text-gray-100 mb-2">
-          {category.toLowerCase() === 'business' ? '💼 ' : '👑 '}
           {content}{' '}
           <a href={source} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-300 inline-flex">
             <LinkIcon className="w-4 h-4" />
           </a>
         </p>
         <div className="text-sm text-gray-400">
-          Predicted: {new Date(prediction_date).toLocaleDateString()}
-          {evaluation_date && ` • Due: ${new Date(evaluation_date).toLocaleDateString()}`}
+          Predicted: {new Date(prediction_date).getFullYear()}
+          {evaluation_date && ` • Due: ${new Date(evaluation_date).getFullYear()}`}
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 items-center">
+      <div className="flex flex-col sm:flex-row gap-4 items-center mb-4">
         <div className="text-center w-full">
           <div className={`text-xl font-bold ${
             decision === true ? 'text-green-400' : 
@@ -50,31 +49,28 @@ export default function Prediction({
           }`}>
             {decision === true ? 'True' : 
              decision === false ? 'False' : 
-             'Undecided'}
+             'Unclear'}
           </div>
         </div>
       </div>
 
       {evidence.length > 0 && (
-        <div className="mt-4 border-t border-gray-700 pt-4">
-          <div className="text-sm font-medium text-gray-300 mb-2">Evidence:</div>
-          <div className="space-y-2">
-            {evidence.map((e) => (
-              <div key={e.id} className="text-sm">
-                <a 
-                  href={e.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300"
-                >
-                  {e.title}
-                </a>
-                <span className="text-gray-500 ml-2">
-                  {new Date(e.evidence_date).toLocaleDateString()}
-                </span>
-              </div>
-            ))}
-          </div>
+        <div className="space-y-2">
+          {evidence.map((e) => (
+            <div key={e.id} className="text-sm">
+              <span className={`mr-2 ${e.supports ? 'text-green-400' : 'text-red-400'}`}>
+                {e.supports ? 'Supports:' : 'Contradicts:'}
+              </span>
+              <a 
+                href={e.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300"
+              >
+                {e.title}
+              </a>
+            </div>
+          ))}
         </div>
       )}
 
