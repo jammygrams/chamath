@@ -22,7 +22,6 @@ export default function Home() {
   const [predictions, setPredictions] = useState<PredictionData[]>([])
   const [userVotes, setUserVotes] = useState<Record<number, boolean>>({})
   const [isLoading, setIsLoading] = useState(true)
-  const [commentCounts, setCommentCounts] = useState<Record<number, number>>({})
   const [activeTab, setActiveTab] = useState<'all' | 'business' | 'politics'>('all')
   const [selectedYear, setSelectedYear] = useState<string>('all')
 
@@ -35,22 +34,13 @@ export default function Home() {
 
   const fetchLatestData = async () => {
     try {
-      const [predictionsResult, commentCountsResult, visitorId] = await Promise.all([
+      const [predictionsResult, visitorId] = await Promise.all([
         supabase.rpc('get_vote_counts'),
-        supabase.rpc('get_comment_counts'),
         getFingerprint()
       ])
 
       if (predictionsResult.data) {
-        console.log('Vote counts updated')
         setPredictions(predictionsResult.data)
-      }
-
-      if (commentCountsResult.data) {
-        const counts = Object.fromEntries(
-          commentCountsResult.data.map(({ prediction_id, count }: { prediction_id: number; count: number }) => [prediction_id, count])
-        )
-        setCommentCounts(counts)
       }
 
       const votesResult = await supabase
@@ -184,7 +174,6 @@ export default function Home() {
                   prediction_date={prediction.prediction_date}
                   userVote={userVotes[prediction.id]}
                   decision={prediction.decision}
-                  commentCount={commentCounts[prediction.id] || 0}
                   category={prediction.category}
                 />
               ))}

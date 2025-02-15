@@ -16,11 +16,21 @@ interface PredictionProps {
   prediction_date: string
   userVote?: boolean
   decision: boolean | null
-  commentCount: number
   category: string
 }
 
-export default function Prediction({ id, content, source, true_votes, false_votes, evaluation_date, prediction_date, userVote: initialUserVote, decision, commentCount, category }: PredictionProps) {
+export default function Prediction({ 
+  id, 
+  content, 
+  source,
+  true_votes,
+  false_votes,
+  evaluation_date,
+  prediction_date,
+  userVote: initialUserVote,
+  decision,
+  category
+}: PredictionProps) {
   const [userVote, setUserVote] = useState<boolean | null>(initialUserVote ?? null)
 
   const handleVote = async (vote: boolean) => {
@@ -115,7 +125,6 @@ export default function Prediction({ id, content, source, true_votes, false_vote
       </div>
       <Comments 
         predictionId={id} 
-        initialCommentCount={commentCount} 
       />
     </div>
   )

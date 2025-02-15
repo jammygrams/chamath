@@ -20,15 +20,10 @@ interface Comment {
   fingerprint: string
 }
 
-export default function Comments({ 
-  predictionId, 
-  initialCommentCount 
-}: { 
-  predictionId: number;
-  initialCommentCount: number;
-}) {
+export default function Comments({ predictionId }: { predictionId: number }) {
   const [isOpen, setIsOpen] = useState(false)
   const [comments, setComments] = useState<Comment[]>([])
+  const [commentCount, setCommentCount] = useState<number>(0)
   const [newComment, setNewComment] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
@@ -36,13 +31,14 @@ export default function Comments({
   const [userFingerprint, setUserFingerprint] = useState<string | null>(null)
 
   const fetchComments = useCallback(async () => {
-    const { data } = await supabase
+    const { data, count } = await supabase
       .from('comments')
-      .select('*')
+      .select('*', { count: 'exact' })
       .eq('prediction_id', predictionId)
       .order('created_at', { ascending: true })
 
     if (data) setComments(data)
+    if (count !== null) setCommentCount(count)
   }, [predictionId])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -95,12 +91,25 @@ export default function Comments({
 
   useEffect(() => {
     getFingerprint().then(setUserFingerprint)
-    
-    if (isOpen) {
-      setIsLoading(true)
-      fetchComments().finally(() => setIsLoading(false))
+
+    // Initial fetch
+    fetchComments()
+
+    // Subscribe to changes
+    const subscription = supabase
+      .channel(`comments-${predictionId}`)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'comments',
+        filter: `prediction_id=eq.${predictionId}`
+      }, fetchComments)
+      .subscribe()
+
+    return () => {
+      subscription.unsubscribe()
     }
-  }, [isOpen, fetchComments])
+  }, [predictionId, fetchComments])
 
   const formatTextWithLinks = (text: string) => {
     const urlRegex = /(https?:\/\/[^\s]+)/g
@@ -129,7 +138,7 @@ export default function Comments({
         className="flex items-center gap-2 text-gray-400 hover:text-gray-300"
       >
         <span className="text-sm font-medium">
-          Sources and discussion ({initialCommentCount})
+          Sources and discussion ({commentCount})
         </span>
         <svg
           className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
