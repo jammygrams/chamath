@@ -143,7 +143,6 @@ export default function Home() {
                   evaluation_date={prediction.evaluation_date}
                   prediction_date={prediction.prediction_date}
                   decision={prediction.decision}
-                  category={prediction.category}
                   evidence={evidenceMap[prediction.id] || []}
                 />
               ))}

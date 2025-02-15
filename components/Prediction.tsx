@@ -11,7 +11,6 @@ interface PredictionProps {
   evaluation_date: string
   prediction_date: string
   decision: boolean | null
-  category: string
   evidence: Evidence[]
 }
 
@@ -22,7 +21,6 @@ export default function Prediction({
   evaluation_date,
   prediction_date,
   decision,
-  category,
   evidence
 }: PredictionProps) {
   return (
