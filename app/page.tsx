@@ -23,6 +23,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'all' | 'business' | 'politics'>('all')
   const [selectedYear, setSelectedYear] = useState<string>('all')
+  const [selectedDecision, setSelectedDecision] = useState<'all' | 'true' | 'false' | 'unclear'>('all')
   const [evidenceMap, setEvidenceMap] = useState<Record<number, Evidence[]>>({})
 
   const years = useMemo(() => {
@@ -69,7 +70,11 @@ export default function Home() {
 
   const filteredPredictions = predictions.filter(prediction => 
     (activeTab === 'all' || prediction.category.toLowerCase() === activeTab) &&
-    (selectedYear === 'all' || new Date(prediction.evaluation_date).getFullYear().toString() === selectedYear)
+    (selectedYear === 'all' || new Date(prediction.evaluation_date).getFullYear().toString() === selectedYear) &&
+    (selectedDecision === 'all' || 
+     (selectedDecision === 'true' && prediction.decision === true) ||
+     (selectedDecision === 'false' && prediction.decision === false) ||
+     (selectedDecision === 'unclear' && prediction.decision === null))
   )
 
   return (
@@ -120,17 +125,30 @@ export default function Home() {
                 </button>
               </div>
               
-              <select
-                value={selectedYear}
-                onChange={(e) => setSelectedYear(e.target.value)}
-                className="bg-gray-800 text-gray-300 px-4 py-2 rounded-lg border border-gray-700"
-              >
-                {years.map(year => (
-                  <option key={year} value={year}>
-                    {year === 'all' ? 'All Years' : year}
-                  </option>
-                ))}
-              </select>
+              <div className="flex gap-4">
+                <select
+                  value={selectedYear}
+                  onChange={(e) => setSelectedYear(e.target.value)}
+                  className="bg-transparent text-gray-300 px-4 py-2 focus:outline-none"
+                >
+                  {years.map(year => (
+                    <option key={year} value={year}>
+                      {year === 'all' ? 'All Years' : year}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  value={selectedDecision}
+                  onChange={(e) => setSelectedDecision(e.target.value as 'all' | 'true' | 'false' | 'unclear')}
+                  className="bg-transparent text-gray-300 px-4 py-2 focus:outline-none"
+                >
+                  <option value="all">All Decisions</option>
+                  <option value="true">True</option>
+                  <option value="false">False</option>
+                  <option value="unclear">Unclear</option>
+                </select>
+              </div>
             </div>
 
             <div className="space-y-6">
