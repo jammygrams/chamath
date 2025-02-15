@@ -18,12 +18,20 @@ interface PredictionData {
   category: string
 }
 
+interface Evidence {
+  id: number
+  prediction_id: number
+  evidence_date: string
+  evidence: string
+}
+
 export default function Home() {
   const [predictions, setPredictions] = useState<PredictionData[]>([])
   const [userVotes, setUserVotes] = useState<Record<number, boolean>>({})
   const [isLoading, setIsLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'all' | 'business' | 'politics'>('all')
   const [selectedYear, setSelectedYear] = useState<string>('all')
+  const [evidenceMap, setEvidenceMap] = useState<Record<number, Evidence[]>>({})
 
   const years = useMemo(() => {
     const uniqueYears = new Set(predictions.map(p => 
@@ -34,62 +42,37 @@ export default function Home() {
 
   const fetchLatestData = async () => {
     try {
-      const [predictionsResult, visitorId] = await Promise.all([
-        supabase.rpc('get_vote_counts'),
-        getFingerprint()
+      const [predictionsResult, evidenceResult] = await Promise.all([
+        supabase.from('predictions').select('*').order('evaluation_date', { ascending: true }),
+        supabase.from('evidence').select('*').order('evidence_date', { ascending: true })
       ])
+
+      console.log('Evidence result:', evidenceResult)
+      console.log('Predictions result:', predictionsResult)
 
       if (predictionsResult.data) {
         setPredictions(predictionsResult.data)
       }
 
-      const votesResult = await supabase
-        .from('votes')
-        .select('prediction_id, vote')
-        .eq('fingerprint', visitorId)
-
-      if (votesResult.data) {
-          const votesMap = votesResult.data.reduce((acc: Record<number, boolean>, vote: { prediction_id: number; vote: boolean }) => ({
-          ...acc,
-          [vote.prediction_id]: vote.vote
-        }), {})
-        console.log('Updating user votes:', Object.keys(votesMap).length)
-        setUserVotes(votesMap)
+      if (evidenceResult.data) {
+        const evidenceByPrediction = evidenceResult.data.reduce((acc, evidence) => {
+          acc[evidence.prediction_id] = acc[evidence.prediction_id] || []
+          acc[evidence.prediction_id].push(evidence)
+          return acc
+        }, {} as Record<number, Evidence[]>)
+        console.log('Evidence map:', evidenceByPrediction)
+        setEvidenceMap(evidenceByPrediction)
       }
+      
+      setIsLoading(false)
     } catch (err) {
-      console.error('Error fetching latest data:', err)
+      console.error('Error fetching data:', err)
+      setIsLoading(false)
     }
   }
 
   useEffect(() => {
-    const loadInitialData = async () => {
-      setIsLoading(true)
-      await fetchLatestData()
-      setIsLoading(false)
-    }
-
-    loadInitialData()
-    
-    const subscription = supabase
-      .channel('public:votes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'votes' },
-        (payload) => {
-          console.log('Vote change detected:', payload)
-          fetchLatestData()
-        }
-      )
-      .subscribe((status) => {
-        console.log('Subscription status:', status)
-      })
-
-    console.log('Subscription set up for votes table')
-
-    return () => {
-      console.log('Unsubscribing from votes table')
-      subscription.unsubscribe()
-    }
+    fetchLatestData()
   }, [])
 
   const filteredPredictions = predictions.filter(prediction => 
@@ -168,13 +151,11 @@ export default function Home() {
                   id={prediction.id}
                   content={prediction.content}
                   source={prediction.source}
-                  true_votes={prediction.true_votes}
-                  false_votes={prediction.false_votes}
                   evaluation_date={prediction.evaluation_date}
                   prediction_date={prediction.prediction_date}
-                  userVote={userVotes[prediction.id]}
                   decision={prediction.decision}
                   category={prediction.category}
+                  evidence={evidenceMap[prediction.id] || []}
                 />
               ))}
             </div>

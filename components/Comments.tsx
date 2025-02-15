@@ -138,7 +138,7 @@ export default function Comments({ predictionId }: { predictionId: number }) {
         className="flex items-center gap-2 text-gray-400 hover:text-gray-300"
       >
         <span className="text-sm font-medium">
-          Sources and discussion ({commentCount})
+          Comments ({commentCount})
         </span>
         <svg
           className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
