@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { supabase } from '../lib/supabase'
 import Prediction from '../components/Prediction'
 import Header from '../components/Header'
-import { getFingerprint } from '../lib/fingerprint'
+import { Evidence } from '@/types'
 
 interface PredictionData {
   id: number
@@ -18,16 +18,8 @@ interface PredictionData {
   category: string
 }
 
-interface Evidence {
-  id: number
-  prediction_id: number
-  evidence_date: string
-  evidence: string
-}
-
 export default function Home() {
   const [predictions, setPredictions] = useState<PredictionData[]>([])
-  const [userVotes, setUserVotes] = useState<Record<number, boolean>>({})
   const [isLoading, setIsLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'all' | 'business' | 'politics'>('all')
   const [selectedYear, setSelectedYear] = useState<string>('all')

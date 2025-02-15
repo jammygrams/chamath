@@ -31,6 +31,7 @@ export default function Comments({ predictionId }: { predictionId: number }) {
   const [userFingerprint, setUserFingerprint] = useState<string | null>(null)
 
   const fetchComments = useCallback(async () => {
+    setIsLoading(true)
     const { data, count } = await supabase
       .from('comments')
       .select('*', { count: 'exact' })
@@ -39,6 +40,7 @@ export default function Comments({ predictionId }: { predictionId: number }) {
 
     if (data) setComments(data)
     if (count !== null) setCommentCount(count)
+    setIsLoading(false)
   }, [predictionId])
 
   const handleSubmit = async (e: React.FormEvent) => {

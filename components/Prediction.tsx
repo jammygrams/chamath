@@ -1,10 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { supabase } from '../lib/supabase'
-import { getFingerprint } from '../lib/fingerprint'
 import { LinkIcon } from '@heroicons/react/24/outline'
 import Comments from './Comments'
+import { Evidence } from '@/types'
 
 interface PredictionProps {
   id: number
