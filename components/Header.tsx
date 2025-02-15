@@ -82,15 +82,22 @@ export default function Header({ predictions }: HeaderProps) {
       <p className="text-3xl md:text-4xl font-bold mb-6">
         {truthLevel.text}
       </p>
-      <div className="w-full max-w-lg mx-auto bg-gray-700 rounded-full h-6">
+      <div className="w-full max-w-lg mx-auto bg-gray-800 rounded-full h-6 overflow-hidden flex">
         <div 
-          className={`h-6 rounded-full transition-all duration-500 ${truthLevel.color}`}
-          style={{ width: `${truthPercentage}%` }}
+          className="h-6 bg-green-400 transition-all duration-500"
+          style={{ width: `${predictions.filter(p => p.decision === true).length / predictions.length * 100}%` }}
+        />
+        <div 
+          className="h-6 bg-gray-400 transition-all duration-500"
+          style={{ width: `${predictions.filter(p => p.decision === null).length / predictions.length * 100}%` }}
         />
       </div>
       <div className="text-lg font-medium mt-4">
         <p className="text-gray-300">
-          {truthPercentage.toFixed(0)}% of his predictions came true.
+          <span className="text-green-400">{truthPercentage.toFixed(0)}%</span> of his {predictions.length} predictions came true.
+        </p>
+        <p className="text-gray-400">
+          {(predictions.filter(p => p.decision === null).length / predictions.length * 100).toFixed(0)}% are unclear.
         </p>
       </div>
     </div>
