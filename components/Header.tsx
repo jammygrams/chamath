@@ -94,10 +94,12 @@ export default function Header({ predictions }: HeaderProps) {
       </div>
       <div className="text-lg font-medium mt-4">
         <p className="text-gray-300">
-          <span className="text-green-400">{truthPercentage.toFixed(0)}%</span> of his {predictions.length} predictions came true.
+          <span className="text-green-400">
+            {((predictions.filter(p => p.decision === true).length / predictions.length) * 100).toFixed(0)}%
+          </span> of his {predictions.length} predictions came true.
         </p>
         <p className="text-gray-400">
-          {(predictions.filter(p => p.decision === null).length / predictions.length * 100).toFixed(0)}% are unclear.
+          {((predictions.filter(p => p.decision === null).length / predictions.length) * 100).toFixed(0)}% are unclear.
         </p>
       </div>
     </div>
