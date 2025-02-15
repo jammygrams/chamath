@@ -68,14 +68,21 @@ export default function Home() {
     fetchLatestData()
   }, [])
 
-  const filteredPredictions = predictions.filter(prediction => 
-    (activeTab === 'all' || prediction.category.toLowerCase() === activeTab) &&
-    (selectedYear === 'all' || new Date(prediction.evaluation_date).getFullYear().toString() === selectedYear) &&
-    (selectedDecision === 'all' || 
-     (selectedDecision === 'true' && prediction.decision === true) ||
-     (selectedDecision === 'false' && prediction.decision === false) ||
-     (selectedDecision === 'unclear' && prediction.decision === null))
-  )
+  const filteredPredictions = predictions
+    .filter(prediction => 
+      (activeTab === 'all' || prediction.category.toLowerCase() === activeTab) &&
+      (selectedYear === 'all' || new Date(prediction.evaluation_date).getFullYear().toString() === selectedYear) &&
+      (selectedDecision === 'all' || 
+       (selectedDecision === 'true' && prediction.decision === true) ||
+       (selectedDecision === 'false' && prediction.decision === false) ||
+       (selectedDecision === 'unclear' && prediction.decision === null))
+    )
+    .sort((a, b) => {
+      // Convert boolean/null to number for easy sorting (true: 2, null: 1, false: 0)
+      const decisionValue = (d: boolean | null) => d === true ? 2 : d === null ? 1 : 0;
+      return decisionValue(b.decision) - decisionValue(a.decision) || 
+             new Date(b.prediction_date).getTime() - new Date(a.prediction_date).getTime();
+    });
 
   return (
     <div className="container mx-auto px-4 py-8 min-h-screen flex flex-col">
@@ -111,7 +118,7 @@ export default function Home() {
                       : 'bg-gray-900 text-gray-400 hover:text-gray-300'
                   }`}
                 >
-                  💼 Business
+                  <span className="hidden sm:inline">Business </span>💼
                 </button>
                 <button
                   onClick={() => setActiveTab('politics')}
@@ -121,7 +128,7 @@ export default function Home() {
                       : 'bg-gray-900 text-gray-400 hover:text-gray-300'
                   }`}
                 >
-                  👑 Politics
+                  <span className="hidden sm:inline">Politics </span>👑
                 </button>
               </div>
               
@@ -143,7 +150,7 @@ export default function Home() {
                   onChange={(e) => setSelectedDecision(e.target.value as 'all' | 'true' | 'false' | 'unclear')}
                   className="bg-transparent text-gray-300 px-4 py-2 focus:outline-none"
                 >
-                  <option value="all">All Decisions</option>
+                  <option value="all">All Outcomes</option>
                   <option value="true">True</option>
                   <option value="false">False</option>
                   <option value="unclear">Unclear</option>
