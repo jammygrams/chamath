@@ -222,7 +222,7 @@ export default function Comments({ predictionId }: { predictionId: number }) {
               ))}
             </div>
           ) : (
-            <p className="text-gray-500 text-sm">No comments yet. Be the first to add a source or comment!</p>
+            <p className="text-gray-500 text-sm">No comments yet. Do you agree / disagree?</p>
           )}
 
           <form onSubmit={handleSubmit} className="mt-4">
