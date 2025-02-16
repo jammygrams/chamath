@@ -40,9 +40,6 @@ export default function Home() {
         supabase.from('evidence').select('*').order('evidence_date', { ascending: true })
       ])
 
-      console.log('Evidence result:', evidenceResult)
-      console.log('Predictions result:', predictionsResult)
-
       if (predictionsResult.data) {
         setPredictions(predictionsResult.data)
       }
@@ -53,7 +50,6 @@ export default function Home() {
           acc[evidence.prediction_id].push(evidence)
           return acc
         }, {} as Record<number, Evidence[]>)
-        console.log('Evidence map:', evidenceByPrediction)
         setEvidenceMap(evidenceByPrediction)
       }
       
