@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import { useMemo } from 'react'
 
 interface Person {
@@ -69,15 +68,7 @@ export default function Header({ predictions, selectedPerson }: HeaderProps) {
 
   return (
     <div className="min-h-[35vh] flex flex-col justify-center mb-8 text-center text-gray-100">
-      <h1 className="text-4xl md:text-5xl font-extrabold mb-2 flex items-center justify-center md:justify-center gap-6 md:gap-8">
-        <Image
-          src={selectedPerson.image_url}
-          alt={selectedPerson.name}
-          width={96}
-          height={96}
-          className="rounded-full inline-block"
-          priority
-        />
+      <h1 className="text-4xl md:text-5xl font-extrabold mb-2 text-center">
         <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent text-left md:text-center">
           Should you trust <a 
             href={selectedPerson.wikipedia_url}
