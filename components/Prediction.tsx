@@ -2,8 +2,6 @@
 
 import { LinkIcon } from '@heroicons/react/24/outline'
 import Comments from './Comments'
-import { Evidence } from '@/types'
-import { useMemo } from 'react'
 
 interface PredictionProps {
   id: number
@@ -11,8 +9,7 @@ interface PredictionProps {
   source: string
   evaluation_date: string
   prediction_date: string
-  decision?: boolean | null
-  evidence: Evidence[]
+  decision: boolean | null
   person_id: number
 }
 
@@ -22,21 +19,8 @@ export default function Prediction({
   source,
   evaluation_date,
   prediction_date,
-  evidence,
+  decision,
 }: PredictionProps) {
-  const decision = useMemo(() => {
-    if (evidence.length === 0) return null;
-    
-    const supportingEvidence = evidence.filter(e => e.supports);
-    const contradictingEvidence = evidence.filter(e => !e.supports);
-    
-    if (supportingEvidence.length === evidence.length) return true;
-    
-    if (contradictingEvidence.length === evidence.length) return false;
-    
-    return null;
-  }, [evidence]);
-  
   return (
     <div className="bg-gray-800 rounded-lg p-6">
       <div className="mb-4">
@@ -65,26 +49,6 @@ export default function Prediction({
           </div>
         </div>
       </div>
-
-      {evidence.length > 0 && (
-        <div className="space-y-2">
-          {evidence.map((e) => (
-            <div key={e.id} className="text-sm">
-              <span className={`mr-2 ${e.supports ? 'text-green-400' : 'text-red-400'}`}>
-                {e.supports ? 'Supports:' : 'Contradicts:'}
-              </span>
-              <a 
-                href={e.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-400 hover:text-blue-300"
-              >
-                {e.title}
-              </a>
-            </div>
-          ))}
-        </div>
-      )}
 
       <Comments predictionId={id} />
     </div>

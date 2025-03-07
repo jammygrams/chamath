@@ -29,6 +29,11 @@ interface Person {
   image_url: string
 }
 
+// First, let's add a type for the calculated decision
+interface PredictionWithDecision extends PredictionData {
+  calculatedDecision: boolean | null;
+}
+
 export default function Home() {
   const [predictions, setPredictions] = useState<PredictionData[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -46,6 +51,39 @@ export default function Home() {
     return ['all', ...Array.from(uniqueYears).sort()]
   }, [predictions])
 
+  // Calculate decisions once when predictions or evidence change
+  const predictionsWithDecisions = useMemo<PredictionWithDecision[]>(() => {
+    return predictions.map(prediction => {
+      const evidence = evidenceMap[prediction.id] || [];
+      let calculatedDecision = null;
+      
+      if (evidence.length > 0) {
+        const supportingEvidence = evidence.filter(e => e.supports);
+        const contradictingEvidence = evidence.filter(e => !e.supports);
+        
+        if (supportingEvidence.length === evidence.length) {
+          calculatedDecision = true;
+        } else if (contradictingEvidence.length === evidence.length) {
+          calculatedDecision = false;
+        }
+      }
+
+      return {
+        ...prediction,
+        calculatedDecision
+      };
+    });
+  }, [predictions, evidenceMap]);
+
+  // Create a map of predictions by person_id for PersonSelector
+  const predictionsMapWithDecisions = useMemo(() => {
+    return predictionsWithDecisions.reduce((acc, pred) => {
+      acc[pred.person_id] = acc[pred.person_id] || [];
+      acc[pred.person_id].push(pred);
+      return acc;
+    }, {} as Record<number, PredictionWithDecision[]>);
+  }, [predictionsWithDecisions]);
+
   const fetchLatestData = async () => {
     try {
       setIsLoading(true);
@@ -58,11 +96,10 @@ export default function Home() {
         // Set default selected person to Chamath (first person)
         setSelectedPerson(peopleResult.data[0]);
         
-        // Fetch predictions for the selected person
+        // Fetch predictions for ALL people and evidence
         const [predictionsResult, evidenceResult] = await Promise.all([
           supabase.from('predictions')
             .select('*')
-            .eq('person_id', peopleResult.data[0].id)
             .order('evaluation_date', { ascending: true }),
           supabase.from('evidence').select('*').order('evidence_date', { ascending: true })
         ]);
@@ -91,77 +128,31 @@ export default function Home() {
   const handlePersonChange = async (person: Person) => {
     setIsLoading(true);
     setSelectedPerson(person);
-    
-    try {
-      const predictionsResult = await supabase.from('predictions')
-        .select('*')
-        .eq('person_id', person.id)
-        .order('evaluation_date', { ascending: true });
-        
-      if (predictionsResult.data) {
-        setPredictions(predictionsResult.data);
-      }
-      
-      setIsLoading(false);
-    } catch (err) {
-      console.error('Error fetching predictions for person:', err);
-      setIsLoading(false);
-    }
+    setIsLoading(false);
   };
 
   useEffect(() => {
     fetchLatestData();
   }, []);
 
-  const filteredPredictions = predictions
+  // Filter predictions for the current view
+  const filteredPredictions = predictionsWithDecisions
     .filter(prediction => {
-      // Calculate decision based on evidence
-      const predictionEvidence = evidenceMap[prediction.id] || [];
-      let calculatedDecision = null;
-      
-      if (predictionEvidence.length > 0) {
-        const supportingEvidence = predictionEvidence.filter(e => e.supports);
-        const contradictingEvidence = predictionEvidence.filter(e => !e.supports);
-        
-        if (supportingEvidence.length === predictionEvidence.length) {
-          calculatedDecision = true;
-        } else if (contradictingEvidence.length === predictionEvidence.length) {
-          calculatedDecision = false;
-        }
-      }
+      if (prediction.person_id !== selectedPerson?.id) return false;
       
       return (
         (activeTab === 'all' || prediction.category.toLowerCase() === activeTab) &&
         (selectedYear === 'all' || new Date(prediction.evaluation_date).getFullYear().toString() === selectedYear) &&
         (selectedDecision === 'all' || 
-         (selectedDecision === 'true' && calculatedDecision === true) ||
-         (selectedDecision === 'false' && calculatedDecision === false) ||
-         (selectedDecision === 'unclear' && calculatedDecision === null))
+         (selectedDecision === 'true' && prediction.calculatedDecision === true) ||
+         (selectedDecision === 'false' && prediction.calculatedDecision === false) ||
+         (selectedDecision === 'unclear' && prediction.calculatedDecision === null))
       );
     })
     .sort((a, b) => {
-      // Calculate decisions for sorting
-      const getCalculatedDecision = (prediction: PredictionData) => {
-        const predictionEvidence = evidenceMap[prediction.id] || [];
-        
-        if (predictionEvidence.length === 0) return null;
-        
-        const supportingEvidence = predictionEvidence.filter(e => e.supports);
-        const contradictingEvidence = predictionEvidence.filter(e => !e.supports);
-        
-        if (supportingEvidence.length === predictionEvidence.length) return true;
-        if (contradictingEvidence.length === predictionEvidence.length) return false;
-        
-        return null;
-      };
-      
       // Convert boolean/null to number for easy sorting (true: 2, null: 1, false: 0)
       const decisionValue = (d: boolean | null) => d === true ? 2 : d === null ? 1 : 0;
-      
-      const decisionA = getCalculatedDecision(a);
-      const decisionB = getCalculatedDecision(b);
-      
-      return decisionValue(decisionB) - decisionValue(decisionA) || 
+      return decisionValue(b.calculatedDecision) - decisionValue(a.calculatedDecision) || 
              new Date(b.prediction_date).getTime() - new Date(a.prediction_date).getTime();
     });
 
@@ -172,15 +163,16 @@ export default function Home() {
           <PersonSelector 
             people={people} 
             selectedPerson={selectedPerson} 
-            onPersonChange={handlePersonChange} 
+            onPersonChange={handlePersonChange}
+            predictionsMap={predictionsMapWithDecisions}
+            evidenceMap={evidenceMap}
           />
         )}
         
         {!isLoading && (
           <Header 
-            predictions={predictions} 
+            predictions={predictionsWithDecisions.filter(p => p.person_id === selectedPerson?.id)}
             selectedPerson={selectedPerson} 
-            evidenceMap={evidenceMap}
           />
         )}
         
@@ -254,7 +246,7 @@ export default function Home() {
                     source={prediction.source}
                     evaluation_date={prediction.evaluation_date}
                     prediction_date={prediction.prediction_date}
-                    evidence={evidenceMap[prediction.id] || []}
+                    decision={prediction.calculatedDecision}
                     person_id={prediction.person_id}
                   />
                 ))}

@@ -1,7 +1,6 @@
 'use client'
 
 import { useMemo } from 'react'
-import { Evidence } from '@/types'
 
 interface Person {
   id: number
@@ -15,55 +14,19 @@ interface Person {
 interface HeaderProps {
   predictions: {
     id: number
-    true_votes: number
-    false_votes: number
-    decision: boolean | null
+    calculatedDecision: boolean | null
   }[]
   selectedPerson: Person | null
-  evidenceMap: Record<number, Evidence[]>
 }
 
-export default function Header({ predictions, selectedPerson, evidenceMap }: HeaderProps) {
-  // Calculate decisions based on evidence
-  const calculatedDecisions = useMemo(() => {
-    return predictions.map(prediction => {
-      const evidence = evidenceMap[prediction.id] || [];
-      
-      if (evidence.length === 0) return null;
-      
-      const supportingEvidence = evidence.filter(e => e.supports);
-      const contradictingEvidence = evidence.filter(e => !e.supports);
-      
-      if (supportingEvidence.length === evidence.length) return true;
-      if (contradictingEvidence.length === evidence.length) return false;
-      
-      return null;
-    });
-  }, [predictions, evidenceMap]);
-  
+export default function Header({ predictions, selectedPerson }: HeaderProps) {
   const truthPercentage = useMemo(() => {
-    const validPredictions = predictions.filter((pred, index) => 
-      calculatedDecisions[index] !== null || (pred.true_votes + pred.false_votes) > 0
-    );
+    if (predictions.length === 0) return 0;
     
-    if (validPredictions.length === 0) return 0;
-
-    const truePredictions = validPredictions.reduce((count, pred, index) => {
-      const calculatedDecision = calculatedDecisions[index];
-      
-      if (calculatedDecision !== null) {
-        // For decided predictions, use the calculated decision value
-        return count + (calculatedDecision ? 1 : 0);
-      } else {
-        // For undecided predictions, use vote counts
-        const totalVotes = pred.true_votes + pred.false_votes;
-        const truePercentage = totalVotes > 0 ? (pred.true_votes / totalVotes) * 100 : 0;
-        return count + (truePercentage >= 50 ? 1 : 0);
-      }
-    }, 0);
-
-    return (truePredictions / validPredictions.length) * 100;
-  }, [predictions, calculatedDecisions]);
+    const truePredictions = predictions.filter(p => p.calculatedDecision === true);
+    const percentage = (truePredictions.length / predictions.length) * 100;
+    return percentage;
+  }, [predictions]);
 
   const getTruthLevel = (percentage: number) => {
     if (percentage < 40) {
@@ -74,7 +37,7 @@ export default function Header({ predictions, selectedPerson, evidenceMap }: Hea
     }
     if (percentage < 60) {
       return {
-        text: `🪙 ${selectedPerson?.name || 'They'}'s as good as a coin flip`,
+        text: `🪙 He's as good as a coin flip`,
         color: "bg-yellow-500"
       }
     }
@@ -89,8 +52,9 @@ export default function Header({ predictions, selectedPerson, evidenceMap }: Hea
   if (!selectedPerson) return null;
 
   // Count predictions by calculated decision
-  const trueCount = calculatedDecisions.filter(d => d === true).length;
-  const unclearCount = calculatedDecisions.filter(d => d === null).length;
+  const trueCount = predictions.filter(p => p.calculatedDecision === true).length;
+  const falseCount = predictions.filter(p => p.calculatedDecision === false).length;
+  const unclearCount = predictions.filter(p => p.calculatedDecision === null).length;
   const totalCount = predictions.length;
 
   return (
@@ -115,6 +79,10 @@ export default function Header({ predictions, selectedPerson, evidenceMap }: Hea
         <div 
           className="h-6 bg-gray-400 transition-all duration-500"
           style={{ width: `${(unclearCount / totalCount) * 100}%` }}
+        />
+        <div 
+          className="h-6 bg-red-400 transition-all duration-500"
+          style={{ width: `${(falseCount / totalCount) * 100}%` }}
         />
       </div>
       <div className="text-lg font-medium mt-4">
