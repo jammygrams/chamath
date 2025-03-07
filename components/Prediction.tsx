@@ -12,6 +12,7 @@ interface PredictionProps {
   prediction_date: string
   decision: boolean | null
   evidence: Evidence[]
+  person_id: number
 }
 
 export default function Prediction({ 
@@ -21,7 +22,8 @@ export default function Prediction({
   evaluation_date,
   prediction_date,
   decision,
-  evidence
+  evidence,
+  person_id
 }: PredictionProps) {
   return (
     <div className="bg-gray-800 rounded-lg p-6">

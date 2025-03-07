@@ -3,15 +3,25 @@
 import Image from 'next/image'
 import { useMemo } from 'react'
 
+interface Person {
+  id: number
+  slug: string
+  name: string
+  full_name: string
+  wikipedia_url: string
+  image_url: string
+}
+
 interface HeaderProps {
   predictions: {
     true_votes: number
     false_votes: number
     decision: boolean | null
   }[]
+  selectedPerson: Person | null
 }
 
-export default function Header({ predictions }: HeaderProps) {
+export default function Header({ predictions, selectedPerson }: HeaderProps) {
   const truthPercentage = useMemo(() => {
     const validPredictions = predictions.filter(pred => 
       pred.decision !== null || (pred.true_votes + pred.false_votes) > 0
@@ -43,29 +53,31 @@ export default function Header({ predictions }: HeaderProps) {
     }
     if (percentage < 60) {
       return {
-        text: "🪙 He's as good as a coin flip",
+        text: `🪙 ${selectedPerson?.name || 'They'}'s as good as a coin flip`,
         color: "bg-yellow-500"
       }
     }
     return {
-      text: "✨ Maybe he knows something...",
+      text: "✨ Maybe they know something...",
       color: "bg-green-500"
     }
   }
 
   const truthLevel = getTruthLevel(truthPercentage)
 
+  if (!selectedPerson) return null;
+
   return (
     <div className="min-h-[35vh] flex flex-col justify-center mb-8 text-center text-gray-100">
       <h1 className="text-4xl md:text-5xl font-extrabold mb-2 flex items-center justify-center md:justify-center gap-6 md:gap-8">
         <a 
-          href="https://en.wikipedia.org/wiki/Chamath_Palihapitiya"
+          href={selectedPerson.wikipedia_url}
           target="_blank"
           rel="noopener noreferrer"
         >
           <Image
-            src="/chamath_cropped.png"
-            alt="Chamath"
+            src={selectedPerson.image_url}
+            alt={selectedPerson.name}
             width={96}
             height={96}
             className="rounded-full inline-block"
@@ -73,10 +85,10 @@ export default function Header({ predictions }: HeaderProps) {
         </a>
         <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent text-left md:text-center">
           Should you trust <a 
-            href="https://en.wikipedia.org/wiki/Chamath_Palihapitiya"
+            href={selectedPerson.wikipedia_url}
             target="_blank"
             rel="noopener noreferrer"
-          >Chamath</a>&apos;s predictions?
+          >{selectedPerson.name}</a>&apos;s predictions?
         </span>
       </h1>
       <p className="text-3xl md:text-4xl font-bold mb-6">
@@ -96,7 +108,7 @@ export default function Header({ predictions }: HeaderProps) {
         <p className="text-gray-300">
           <span className="text-green-400">
             {((predictions.filter(p => p.decision === true).length / predictions.length) * 100).toFixed(0)}%
-          </span> of his {predictions.length} predictions came true.
+          </span> of {selectedPerson.name}&apos;s {predictions.length} predictions came true.
         </p>
         <p className="text-gray-400">
           {((predictions.filter(p => p.decision === null).length / predictions.length) * 100).toFixed(0)}% are unclear.
