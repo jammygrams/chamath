@@ -22,8 +22,7 @@ export default function Prediction({
   evaluation_date,
   prediction_date,
   decision,
-  evidence,
-  person_id
+  evidence
 }: PredictionProps) {
   return (
     <div className="bg-gray-800 rounded-lg p-6">
