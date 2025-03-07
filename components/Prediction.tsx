@@ -3,6 +3,7 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
 import Comments from './Comments'
 import { Evidence } from '@/types'
+import { useMemo } from 'react'
 
 interface PredictionProps {
   id: number
@@ -10,7 +11,7 @@ interface PredictionProps {
   source: string
   evaluation_date: string
   prediction_date: string
-  decision: boolean | null
+  decision?: boolean | null
   evidence: Evidence[]
   person_id: number
 }
@@ -21,9 +22,21 @@ export default function Prediction({
   source,
   evaluation_date,
   prediction_date,
-  decision,
-  evidence
+  evidence,
 }: PredictionProps) {
+  const decision = useMemo(() => {
+    if (evidence.length === 0) return null;
+    
+    const supportingEvidence = evidence.filter(e => e.supports);
+    const contradictingEvidence = evidence.filter(e => !e.supports);
+    
+    if (supportingEvidence.length === evidence.length) return true;
+    
+    if (contradictingEvidence.length === evidence.length) return false;
+    
+    return null;
+  }, [evidence]);
+  
   return (
     <div className="bg-gray-800 rounded-lg p-6">
       <div className="mb-4">

@@ -114,18 +114,54 @@ export default function Home() {
   }, []);
 
   const filteredPredictions = predictions
-    .filter(prediction => 
-      (activeTab === 'all' || prediction.category.toLowerCase() === activeTab) &&
-      (selectedYear === 'all' || new Date(prediction.evaluation_date).getFullYear().toString() === selectedYear) &&
-      (selectedDecision === 'all' || 
-       (selectedDecision === 'true' && prediction.decision === true) ||
-       (selectedDecision === 'false' && prediction.decision === false) ||
-       (selectedDecision === 'unclear' && prediction.decision === null))
-    )
+    .filter(prediction => {
+      // Calculate decision based on evidence
+      const predictionEvidence = evidenceMap[prediction.id] || [];
+      let calculatedDecision = null;
+      
+      if (predictionEvidence.length > 0) {
+        const supportingEvidence = predictionEvidence.filter(e => e.supports);
+        const contradictingEvidence = predictionEvidence.filter(e => !e.supports);
+        
+        if (supportingEvidence.length === predictionEvidence.length) {
+          calculatedDecision = true;
+        } else if (contradictingEvidence.length === predictionEvidence.length) {
+          calculatedDecision = false;
+        }
+      }
+      
+      return (
+        (activeTab === 'all' || prediction.category.toLowerCase() === activeTab) &&
+        (selectedYear === 'all' || new Date(prediction.evaluation_date).getFullYear().toString() === selectedYear) &&
+        (selectedDecision === 'all' || 
+         (selectedDecision === 'true' && calculatedDecision === true) ||
+         (selectedDecision === 'false' && calculatedDecision === false) ||
+         (selectedDecision === 'unclear' && calculatedDecision === null))
+      );
+    })
     .sort((a, b) => {
+      // Calculate decisions for sorting
+      const getCalculatedDecision = (prediction: PredictionData) => {
+        const predictionEvidence = evidenceMap[prediction.id] || [];
+        
+        if (predictionEvidence.length === 0) return null;
+        
+        const supportingEvidence = predictionEvidence.filter(e => e.supports);
+        const contradictingEvidence = predictionEvidence.filter(e => !e.supports);
+        
+        if (supportingEvidence.length === predictionEvidence.length) return true;
+        if (contradictingEvidence.length === predictionEvidence.length) return false;
+        
+        return null;
+      };
+      
       // Convert boolean/null to number for easy sorting (true: 2, null: 1, false: 0)
       const decisionValue = (d: boolean | null) => d === true ? 2 : d === null ? 1 : 0;
-      return decisionValue(b.decision) - decisionValue(a.decision) || 
+      
+      const decisionA = getCalculatedDecision(a);
+      const decisionB = getCalculatedDecision(b);
+      
+      return decisionValue(decisionB) - decisionValue(decisionA) || 
              new Date(b.prediction_date).getTime() - new Date(a.prediction_date).getTime();
     });
 
@@ -140,7 +176,13 @@ export default function Home() {
           />
         )}
         
-        <Header predictions={predictions} selectedPerson={selectedPerson} />
+        {!isLoading && (
+          <Header 
+            predictions={predictions} 
+            selectedPerson={selectedPerson} 
+            evidenceMap={evidenceMap}
+          />
+        )}
         
         {isLoading ? (
           <div className="flex items-center justify-center h-[50vh]">
@@ -212,7 +254,6 @@ export default function Home() {
                     source={prediction.source}
                     evaluation_date={prediction.evaluation_date}
                     prediction_date={prediction.prediction_date}
-                    decision={prediction.decision}
                     evidence={evidenceMap[prediction.id] || []}
                     person_id={prediction.person_id}
                   />

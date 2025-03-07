@@ -1,0 +1,12 @@
+id,created_at,prediction_id,url,title,evidence_date,supports
+,2025-03-07 00:00:00+00,32,https://www.politico.com/news/2022/11/08/ron-desantis-reelection-florida-governor-2022-00065058,"Ron DeSantis Wins Re-election by Landslide",2022-11-08,true
+,2025-03-07 00:00:00+00,35,https://www.npr.org/2022/11/17/1137132607/nancy-pelosi-step-down-house-democratic-leader,"Pelosi Steps Down as House Democratic Leader",2022-11-17,false
+,2025-03-07 00:00:00+00,38,https://www.revolution.com/rise-of-the-rest/,"Rise of the Rest Initiative Overview",2022-12-31,false
+,2025-03-07 00:00:00+00,41,https://www.forbes.com/sites/investor/2022/12/30/stock-market-2022-winners-and-losers/,"Stock Market 2022 Winners and Losers",2022-12-30,false
+,2025-03-07 00:00:00+00,47,https://pitchbook.com/news/reports/2022-annual-us-venture-capital-report,"2022 Annual US Venture Capital Report",2022-12-31,false
+,2025-03-07 00:00:00+00,56,https://www.supremecourt.gov/opinions/22pdf/20-1199_hgdj.pdf,"Supreme Court Strikes Down Affirmative Action",2023-06-29,true
+,2025-03-07 00:00:00+00,59,https://www.latimes.com/california/story/2023-12-20/california-population-decline-continues,"California Population Decline Continues",2023-12-20,false
+,2025-03-07 00:00:00+00,62,https://www.eia.gov/naturalgas/weekly/archives/2023/12_28/ng_update.php,"Natural Gas Weekly Update December 2023",2023-12-28,true
+,2025-03-07 00:00:00+00,65,https://www.bea.gov/news/2023/personal-income-and-outlays-december-2023,"Personal Income and Outlays December 2023",2023-12-31,false
+,2025-03-07 00:00:00+00,71,https://pitchbook.com/news/reports/q4-2023-us-venture-capital-report,"Q4 2023 US Venture Capital Report",2023-12-31,false
+,2025-03-07 00:00:00+00,74,https://www.sfchronicle.com/sf/article/san-francisco-office-vacancy-18468723.php,"San Francisco Office Vacancy Hits Record High",2023-12-31,true
