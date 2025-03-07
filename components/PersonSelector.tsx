@@ -57,7 +57,7 @@ export default function PersonSelector({
   };
 
   return (
-    <div className="flex justify-between items-end mb-8 h-[300px] max-w-[95vw] mx-auto">
+    <div className="flex justify-center gap-2 sm:gap-4 items-end mb-8 h-[300px] w-[95vw] sm:w-[500px] md:w-[600px] mx-auto">
       {peopleWithScores.map((person, index) => {
         const podiumHeight = Math.max(20, person.scorePercentage * 2);
         const isSelected = selectedPerson.id === person.id;
@@ -66,7 +66,7 @@ export default function PersonSelector({
         return (
           <div 
             key={person.id}
-            className="flex flex-col items-center cursor-pointer w-[20%]"
+            className="flex flex-col items-center cursor-pointer w-[80px] sm:w-[100px]"
             onClick={() => onPersonChange(person)}
           >
             {/* Profile section - constant size */}
@@ -84,8 +84,9 @@ export default function PersonSelector({
             <div className={`text-center transition-all duration-300 ${
               isSelected ? 'transform scale-110' : ''
             }`}>
-              <div className="font-medium text-gray-300 text-sm sm:text-base">
-                {person.name} {rankingEmoji}
+              <div className="font-medium text-gray-300 text-sm sm:text-base flex flex-col sm:block">
+                <span>{person.name}</span>
+                {rankingEmoji && <span className="text-base sm:ml-1">{rankingEmoji}</span>}
               </div>
               <div className="text-xs sm:text-sm text-green-400 font-bold">
                 {person.scorePercentage.toFixed(0)}%
