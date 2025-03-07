@@ -66,11 +66,11 @@ export default function PersonSelector({
         return (
           <div 
             key={person.id}
-            className="flex flex-col items-center mx-4 cursor-pointer"
+            className="flex flex-col items-center mx-1 sm:mx-4 cursor-pointer"
             onClick={() => onPersonChange(person)}
           >
             {/* Profile section - constant size */}
-            <div className={`relative w-20 h-20 mb-2 rounded-full overflow-hidden border-4 transition-all duration-300 ${
+            <div className={`relative w-16 h-16 sm:w-20 sm:h-20 mb-2 rounded-full overflow-hidden border-4 transition-all duration-300 ${
               isSelected ? 'border-blue-500 transform scale-110' : 'border-gray-700 hover:border-gray-500'
             }`}>
               <Image
@@ -84,20 +84,20 @@ export default function PersonSelector({
             <div className={`text-center transition-all duration-300 ${
               isSelected ? 'transform scale-110' : ''
             }`}>
-              <div className="font-medium text-gray-300">
+              <div className="font-medium text-gray-300 text-sm sm:text-base">
                 {person.name} {rankingEmoji}
               </div>
-              <div className="text-sm text-green-400 font-bold">
+              <div className="text-xs sm:text-sm text-green-400 font-bold">
                 {person.scorePercentage.toFixed(0)}%
               </div>
-              <div className="text-xs text-gray-500">
+              <div className="text-xs sm:text-xs text-gray-500">
                 {person.score} / {person.totalPredictions}
               </div>
             </div>
             {/* Podium section - variable height */}
             <div className="flex-grow w-full flex items-end">
               <div 
-                className={`w-24 rounded-t-lg transition-all duration-300 ${
+                className={`w-16 sm:w-24 rounded-t-lg transition-all duration-300 ${
                   isSelected ? 'bg-blue-500/20' : 'bg-gray-700/20'
                 }`}
                 style={{ height: `${podiumHeight}px` }}
