@@ -11,8 +11,10 @@
   "dependencies": {
     "@fingerprintjs/fingerprintjs": "^4.5.1",
     "@heroicons/react": "^2.2.0",
-    "@supabase/supabase-js": "^2.47.12",
+    "@supabase/supabase-js": "^2.49.1",
+    "dotenv": "^16.4.7",
     "next": "15.1.4",
+    "node-fetch": "^3.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "unique-names-generator": "^4.7.1"
