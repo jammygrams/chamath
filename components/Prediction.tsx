@@ -2,6 +2,7 @@
 
 import { LinkIcon } from '@heroicons/react/24/outline'
 import Comments from './Comments'
+import { Evidence } from '@/types'
 
 interface PredictionProps {
   id: number
@@ -11,6 +12,7 @@ interface PredictionProps {
   prediction_date: string
   decision: boolean | null
   person_id: number
+  evidence?: Evidence[]
 }
 
 export default function Prediction({ 
@@ -20,6 +22,7 @@ export default function Prediction({
   evaluation_date,
   prediction_date,
   decision,
+  evidence = [],
 }: PredictionProps) {
   return (
     <div className="bg-gray-800 rounded-lg p-6">
@@ -49,6 +52,26 @@ export default function Prediction({
           </div>
         </div>
       </div>
+
+      {/* Evidence section */}
+      {evidence.length > 0 && (
+        <div className="mb-4 space-y-1">
+          {evidence.map(e => (
+            <a 
+              key={e.id}
+              href={e.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block text-gray-300 hover:text-gray-100"
+            >
+              <span className={e.supports ? "text-green-400" : "text-red-400"}>
+                {e.supports ? "Supporting: " : "Opposing: "}
+              </span>
+              {e.title}
+            </a>
+          ))}
+        </div>
+      )}
 
       <Comments predictionId={id} />
     </div>

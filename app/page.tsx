@@ -248,6 +248,7 @@ export default function Home() {
                     prediction_date={prediction.prediction_date}
                     decision={prediction.calculatedDecision}
                     person_id={prediction.person_id}
+                    evidence={evidenceMap[prediction.id] || []}
                   />
                 ))}
               </div>
