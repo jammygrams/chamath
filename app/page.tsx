@@ -186,31 +186,17 @@ export default function Home() {
               Here&apos;s what {selectedPerson?.name} predicted...
             </h2>
 
-            <div className="flex justify-between items-center mb-8 border-b border-gray-700">
-              <div className="flex gap-1">
-                <button
-                  onClick={() => setActiveTab('all')}
-                  className={`px-4 py-2 ${activeTab === 'all' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-gray-400'}`}
+            <div className="flex justify-start items-center mb-8 gap-4">
+                <select
+                  value={activeTab}
+                  onChange={(e) => setActiveTab(e.target.value as 'all' | 'business' | 'politics')}
+                  className="bg-gray-800 text-gray-100 px-3 py-2 rounded border border-gray-700"
                 >
-                  All
-                </button>
-                <button
-                  onClick={() => setActiveTab('business')}
-                  className={`px-4 py-2 ${activeTab === 'business' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-gray-400'}`}
-                >
-                  Business
-                </button>
-                <button
-                  onClick={() => setActiveTab('politics')}
-                  className={`px-4 py-2 ${activeTab === 'politics' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-gray-400'}`}
-                >
-                  Politics
-                </button>
-              </div>
-            </div>
+                  <option value="all">All Categories</option>
+                  <option value="business">Business</option>
+                  <option value="politics">Politics</option>
+                </select>
 
-            <div className="flex justify-between items-center mb-8">
-              <div className="flex flex-wrap gap-2">
                 <select
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(e.target.value)}
@@ -226,14 +212,13 @@ export default function Home() {
                 <select
                   value={selectedDecision}
                   onChange={(e) => setSelectedDecision(e.target.value as 'all' | 'true' | 'false' | 'unclear')}
-                  className="bg-transparent text-gray-300 px-4 py-2 focus:outline-none"
+                  className="bg-gray-800 text-gray-100 px-3 py-2 rounded border border-gray-700"
                 >
-                  <option value="all">All Outcomes</option>
+                  <option value="all">All Results</option>
                   <option value="true">True</option>
                   <option value="false">False</option>
                   <option value="unclear">Unclear</option>
                 </select>
-              </div>
             </div>
 
             <div className="space-y-6">
