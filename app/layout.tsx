@@ -6,6 +6,9 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata = {
   title: "All-In Podcast Predictions",
   description: 'How accurate are the All-In Podcast hosts\' predictions?',
+  icons: {
+    icon: '/all-in.png',
+  },
 }
 
 export default function RootLayout({
