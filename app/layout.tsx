@@ -4,10 +4,25 @@ import { Inter } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: "All-In Podcast Predictions",
+  title: "All Prophets",
   description: 'How accurate are the All-In Podcast hosts\' predictions?',
   icons: {
     icon: '/all-in.png',
+  },
+  openGraph: {
+    title: 'All Prophets',
+    description: 'How accurate are the All-In Podcast hosts\' predictions?',
+    images: [
+      {
+        url: 'https://www.allprophets.org/rankings-screenshot.png',
+        width: 1104,
+        height: 690,
+        alt: 'All Prophets - All-In Podcast Predictions',
+      },
+    ],
+    url: 'https://www.allprophets.org',
+    siteName: 'All Prophets',
+    type: 'website',
   },
 }
 
@@ -23,10 +38,6 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/all-in.png" />
         <meta name="msapplication-TileColor" content="#da532c" />
         <meta name="theme-color" content="#ffffff" />
-        <meta property="og:title" content="All Prophets" />
-        <meta property="og:description" content="How accurate are the All-In Podcast hosts' predictions?" />
-        <meta property="og:image" content="https://chamath-eight.vercel.app/all-in.png" />
-        <meta property="og:url" content="https://www.allprophets.org" />
       </head>
       <body className={`${inter.className} bg-gray-900 text-gray-100`}>{children}</body>
     </html>
