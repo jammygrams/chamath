@@ -1,5 +1,6 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
+import { Analytics } from "@vercel/analytics/react"
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -39,7 +40,10 @@ export default function RootLayout({
         <meta name="msapplication-TileColor" content="#da532c" />
         <meta name="theme-color" content="#ffffff" />
       </head>
-      <body className={`${inter.className} bg-gray-900 text-gray-100`}>{children}</body>
+      <body className={`${inter.className} bg-gray-900 text-gray-100`}>
+        {children}
+        <Analytics />
+      </body>
     </html>
   )
 }
