@@ -22,7 +22,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#ffffff" />
         <meta property="og:title" content="All Prophets" />
         <meta property="og:description" content="How accurate are the All-In Podcast hosts' predictions?" />
-        <meta property="og:image" content="https://raw.githubusercontent.com/jammygrams/chamath/main/public//all-in.png" />
+        <meta property="og:image" content="https://raw.githubusercontent.com/jammygrams/chamath/main/public/all-in.png" />
         <meta property="og:url" content="https://www.allprophets.org" />
       </head>
       <body className={`${inter.className} bg-gray-900 text-gray-100`}>{children}</body>
